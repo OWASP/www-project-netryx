@@ -1,2 +1,2 @@
 ### Leaders
-* [Rauf Aliyev](mailto:Rauf.Aliyev@owasp.org)
+* [Satira](mailto:satira@exploit.org)
