@@ -66,3 +66,6 @@ These methods play a key role in detecting and preventing dangerous threats such
 - **Humanoid Bots**: Identify bots designed to mimic human behavior, which pose a particular threat to detection systems.
 
 # Contact
+For security concerns or to discuss potential features that you'd prefer not to disclose publicly, please reach out to us at: `security@exploit.org`.
+
+For general inquiries or to engage in discussions on various topics, join our Telegram channel and chat at: [@exploitorg](https://t.me/exploitorg).
