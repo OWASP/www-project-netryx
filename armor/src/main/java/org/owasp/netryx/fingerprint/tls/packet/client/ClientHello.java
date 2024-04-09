@@ -1,6 +1,6 @@
 package org.owasp.netryx.fingerprint.tls.packet.client;
 
-import org.owasp.netryx.fingerprint.tls.ja3.Ja3Fingerprint;
+import org.owasp.netryx.fingerprint.tls.Ja3Fingerprint;
 import org.owasp.netryx.fingerprint.tls.packet.Record;
 import org.owasp.netryx.fingerprint.tls.packet.*;
 import org.owasp.netryx.fingerprint.tls.packet.constant.ExtensionType;

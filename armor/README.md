@@ -21,7 +21,9 @@ Built for scalability, flexibility, and reliability, NetArmor integrates with Ne
 - [x] HTTP/2 0day RST flood protection (see in [Cloudflare Blog](https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/))
 - [x] HTTP Rate Limiting to prevent DoS, brute force attacks etc.
 - [x] IP Whitelisting/Blacklisting
-- [x] TLS (JA3) fingerprinting
+- [x] JA3 TLS fingerprinting
+- [x] JA4 TLS fingerprinting
+- [x] JA4_H HttpClient fingerprinting
 - [x] HTTP/2 fingerprinting
 - [x] Intrusion Detection System (IDS)
 
@@ -412,7 +414,7 @@ To analyze TLS fingerprint with request and other fingerprinting options, please
 IDS gives you ability to detect attacks, that are not detected by other security features, including 0day attacks,
 or even identify new attacks, that are not known yet.
 
-Although realization depends on the application, we already work on AI Based IDS, that will be available soon.
+Although realization depends on the application, we already work on common AI Based IDS, that will be available soon.
 We plan to make it open source, so that everyone can contribute to it and make it better.
 
 It will be advanced enough to detect attacks, that are not detected by other security features.
@@ -420,9 +422,9 @@ It will be advanced enough to detect attacks, that are not detected by other sec
 The process of gathering information is meticulously structured into four essential phases:
 
 - The first phase involves the collection of Remote Addresses, which helps pinpoint the origin of the traffic.
-- When TLS is used, the next step is capturing TLS (JA3) fingerprint, that is very helpful in detecting spoofing.
+- When TLS is used, the next step is capturing TLS (JA3 and JA4) fingerprints, that is very helpful in detecting spoofing.
 - For traffic over HTTP/2, we also gather HTTP/2 Fingerprints, following the guidelines set by Akamai: [AKAMAI WHITE PAPER](https://www.blackhat.com/docs/eu-17/materials/eu-17-Shuster-Passive-Fingerprinting-Of-HTTP2-Clients-wp.pdf)
-- Finally, we compile data from HTTP Requests for examination the traffic's characteristics.
+- Finally, we compile data from HTTP Requests for examination the traffic's characteristics and prepare JA4 HTTP Fingerprint
 
 Example of implementation:
 ```java
@@ -430,15 +432,23 @@ public class MyIntrusionDetector implements IntrusionDetector {
     @Override
     public Mono<DetectionResult> detect(IntrusionDetectionData data) {
         var clientHello = data.getClientHello(); // Client hello packet, if TLS is used
-        var ja3 = clientHello.ja3(); // Get Ja3 fingerprint
         
-        var encoded = ja3.md5(); // md5 hash of ja3 fingerprint
-        var raw = ja3.value(); // raw ja3 fingerprint
+        var ja3 = data.getJa3Fingerprint(); // TLS JA3 fingerprint
+        var ja4 = data.getJa4Fingerprint(); // TLS JA4 fingerprint
+        var ja4h = data.getJa4HttpFingerprint(); // Http Client JA4_H fingerprint
+        var http2Fingerprint = data.getHttp2Fingerprint(); // Akamai suggested HTTP/2 fingerprint
+
+        var rawJa3 = ja3.getValue(); // raw JA3 fingerprint
+        var encodedJa3 = ja3.getHash(); // md5 hash of JA3 fingerprint
+        
+        var rawJa4 = ja4.getValue(); // raw JA4 fingerprint
+        var encodedJa4 = ja4.getEncoded(); // hashed JA4 fingerprint
+        
+        var ja4hValue = ja4h.getValue(); // JA4_H fingerprint
         
         var request = data.getRequest(); // The request that is being checked
         var ip = data.getRemoteAddress(); // IP address of the client
         
-        var http2Fingerprint = data.getHttp2Fingerprint();
         var formattedHttp2Fingerprint = http2Fingerprint.toString(); // Akamai suggested format
         // P.S you can collect data in case you want to train own model in future
         // or even to contribute the dataset to us.

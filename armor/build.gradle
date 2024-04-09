@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'org.owasp'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
@@ -29,6 +29,14 @@ dependencies {
     implementation 'io.projectreactor:reactor-core:3.6.0'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
     implementation 'org.slf4j:slf4j-api:2.0.9'
+}
+
+jar {
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
 }
 
 test {

@@ -5,6 +5,7 @@ import org.owasp.netryx.constant.ChannelScope;
 import org.owasp.netryx.intrusion.IntrusionDetector;
 import org.owasp.netryx.mitigation.MitigationHandler;
 import org.owasp.netryx.mitigation.intrusion.collector.Http2FingerprintCollector;
+import org.owasp.netryx.mitigation.intrusion.collector.HttpProtocolDetector;
 import org.owasp.netryx.mitigation.intrusion.collector.RemoteAddressCollector;
 import org.owasp.netryx.mitigation.intrusion.collector.TlsFingerprintCollector;
 import org.owasp.netryx.mitigation.intrusion.model.IntrusionDetectionData;
@@ -49,6 +50,7 @@ public class IntrusionMitigationHandler implements MitigationHandler {
     public void close() throws IOException {}
 
     private void configureChannel(NettyServerProvider<?> server, ChannelPipeline pipeline) {
+        server.addBeforeHttpRequestHandler(pipeline, HTTP_PROTOCOL_DETECTOR, new HttpProtocolDetector(sharedCollector));
         server.addFirst(pipeline, REMOTE_ADDRESS, new RemoteAddressCollector(sharedCollector));
         server.addBeforeSslHandler(pipeline, TLS_FINGERPRINT, new TlsFingerprintCollector(sharedCollector));
         server.addBeforeHttp2Handler(pipeline, HTTP2_FINGERPRINT, new Http2FingerprintCollector(sharedCollector));

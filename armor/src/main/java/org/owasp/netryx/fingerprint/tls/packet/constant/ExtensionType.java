@@ -12,7 +12,7 @@ import java.util.Arrays;
  * <p>
  * Represents a TLS extension types.
  */
-public enum ExtensionType implements TlsPacket {
+public enum ExtensionType implements TlsPacket, Greaseable {
     SERVER_NAME(0x0000) {
         @Override
         public ServerName getExtension() {
@@ -49,7 +49,12 @@ public enum ExtensionType implements TlsPacket {
     },
     USE_SRTP(0x000E),
     HEARTBEAT(0x000F),
-    APPLICATION_LAYER_PROTOCOL_NEGOTIATION(0x0010),
+    APPLICATION_LAYER_PROTOCOL_NEGOTIATION(0x0010) {
+        @Override
+        public AlpnExtension getExtension() {
+            return new AlpnExtension();
+        }
+    },
     STATUS_REQUEST_V2(0x0011),
     SIGNED_CERTIFICATE_TIMESTAMP(0x0012),
     CLIENT_CERTIFICATE_TYPE(0x00013),
@@ -75,7 +80,12 @@ public enum ExtensionType implements TlsPacket {
     SUPPORTED_EKT_CIPHERS(0x0027),
     PRE_SHARED_KEY(0x0029),
     EARLY_DATA(0x002A),
-    SUPPORTED_VERSIONS(0x002B),
+    SUPPORTED_VERSIONS(0x002B) {
+        @Override
+        public SupportedVersions getExtension() {
+            return new SupportedVersions();
+        }
+    },
     COOKIE(0x002C),
     PSK_KEY_EXCHANGE_MODES(0x002D),
     CERTIFICATE_AUTHORITIES(0x002F),
@@ -124,6 +134,7 @@ public enum ExtensionType implements TlsPacket {
         return new Extension(id, this);
     }
 
+    @Override
     public boolean isGrease() {
         return name().startsWith("GREASE");
     }

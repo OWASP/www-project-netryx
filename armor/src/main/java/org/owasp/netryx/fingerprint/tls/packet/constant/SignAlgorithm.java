@@ -9,7 +9,7 @@ import java.util.Arrays;
  * SignAlgorithm
  * Represents a TLS signature algorithm
  */
-public enum SignAlgorithm implements TlsPacket {
+public enum SignAlgorithm implements TlsPacket, Greaseable {
     RSA_PKCS1_SHA256(0x0401),
     ECDSA_SECP256r1_SHA256(0x0403),
     RSA_PKCS1_SHA384(0x0501),
@@ -64,6 +64,7 @@ public enum SignAlgorithm implements TlsPacket {
         return id;
     }
 
+    @Override
     public boolean isGrease() {
         return name().startsWith("GREASE");
     }

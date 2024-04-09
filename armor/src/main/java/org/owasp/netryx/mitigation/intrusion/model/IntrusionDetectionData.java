@@ -1,13 +1,18 @@
 package org.owasp.netryx.mitigation.intrusion.model;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import org.owasp.netryx.constant.HttpProtocol;
 import org.owasp.netryx.fingerprint.http2.AkamaiHttp2Fingerprint;
+import org.owasp.netryx.fingerprint.request.Ja4hFingerprint;
+import org.owasp.netryx.fingerprint.tls.Ja3Fingerprint;
+import org.owasp.netryx.fingerprint.tls.Ja4Fingerprint;
 import org.owasp.netryx.fingerprint.tls.packet.client.ClientHello;
 
 /**
  * Represents the data of an intrusion detection.
  */
 public class IntrusionDetectionData {
+    private HttpProtocol httpProtocol = HttpProtocol.HTTP_1_1;
     private String remoteAddress;
     private FullHttpRequest request;
     private ClientHello clientHello;
@@ -16,10 +21,15 @@ public class IntrusionDetectionData {
     public IntrusionDetectionData() {}
 
     public IntrusionDetectionData(IntrusionDetectionData data) {
+        this.httpProtocol = data.httpProtocol;
         this.remoteAddress = data.remoteAddress;
         this.request = data.request;
         this.clientHello = data.clientHello;
         this.http2Fingerprint = data.http2Fingerprint;
+    }
+
+    public HttpProtocol getHttpProtocol() {
+        return httpProtocol;
     }
 
     public String getRemoteAddress() {
@@ -34,8 +44,24 @@ public class IntrusionDetectionData {
         return clientHello;
     }
 
+    public Ja3Fingerprint getJa3Fingerprint() {
+        return clientHello == null ? null : clientHello.ja3();
+    }
+
+    public Ja4Fingerprint getJa4Fingerprint() {
+        return clientHello == null ? null : new Ja4Fingerprint(clientHello);
+    }
+
+    public Ja4hFingerprint getJa4HttpFingerprint() {
+        return request == null ? null : new Ja4hFingerprint(httpProtocol, request);
+    }
+
     public AkamaiHttp2Fingerprint getHttp2Fingerprint() {
         return http2Fingerprint;
+    }
+
+    public void setHttpProtocol(HttpProtocol httpProtocol) {
+        this.httpProtocol = httpProtocol;
     }
 
     public void setRemoteAddress(String remoteAddress) {

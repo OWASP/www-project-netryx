@@ -2,6 +2,7 @@ package org.owasp.netryx.fingerprint.tls.packet.extension;
 
 import org.owasp.netryx.fingerprint.tls.packet.TlsPacket;
 import org.owasp.netryx.fingerprint.tls.packet.constant.ExtensionType;
+import org.owasp.netryx.fingerprint.tls.packet.constant.Greaseable;
 import org.owasp.netryx.util.io.UIntInputStream;
 
 /**

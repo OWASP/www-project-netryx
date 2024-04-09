@@ -15,6 +15,14 @@ dependencies {
     implementation 'net.java.dev.jna:jna:5.13.0'
 }
 
+jar {
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+}
+
 test {
     useJUnitPlatform()
 }

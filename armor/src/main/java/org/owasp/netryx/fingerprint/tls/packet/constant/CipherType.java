@@ -9,7 +9,7 @@ import java.util.Arrays;
  * CipherSuite
  * Represents a TLS cipher suite.
  */
-public enum CipherType implements TlsPacket {
+public enum CipherType implements TlsPacket, Greaseable {
     TLS_NULL_WITH_NULL_NULL(0x00),
     TLS_RSA_WITH_NULL_MD5(0x01),
     TLS_RSA_WITH_NULL_SHA(0x02),
@@ -423,6 +423,7 @@ public enum CipherType implements TlsPacket {
         return id;
     }
 
+    @Override
     public boolean isGrease() {
         return name().startsWith("GREASE");
     }

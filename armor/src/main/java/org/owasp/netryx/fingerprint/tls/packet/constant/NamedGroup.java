@@ -9,7 +9,7 @@ import java.util.Arrays;
  * NamedGroup
  * Represents a TLS named group
  */
-public enum NamedGroup implements TlsPacket {
+public enum NamedGroup implements TlsPacket, Greaseable {
     SECT163K1(0x0001),
     SECT163R1(0x0002),
     SECT163R2(0x0003),
@@ -71,6 +71,7 @@ public enum NamedGroup implements TlsPacket {
         return id;
     }
 
+    @Override
     public boolean isGrease() {
         return name().startsWith("GREASE");
     }

@@ -14,6 +14,7 @@ in Netty based servers that includes:
 - **HTTP/2 0day RST flood protection**
 - **HTTP/2 fingerprinting**
 - **JA3 Fingerprinting**
+- **JA4 and JA4H Fingerprinting**
 - **IDS interface**
 - **ReDoS protected validators**
 - **XSS Protection**
