@@ -1,15 +1,14 @@
 # Netryx Memory
 
-It is designed to handle sensitive data in memory with an emphasis on security. It provides mechanisms to securely allocate, access, and manipulate memory regions with features like automatic obfuscation and protection against unauthorized access. This class ensures that sensitive data is not easily compromised by memory dumping attacks or unintended memory access.
+This library securely handles sensitive data in memory, offering tools to manage memory regions safely.
+**Currently only Linux and Mac OS are supported**.
 
 ## Features
-- **Secure Allocation:** Allocates memory securely and ensures it is locked, preventing swapping to disk.
+- **Secure Allocation:** Allocates memory, that is protected from being swapped to disk.
 - **Read and Write Operations:** Safely read and write data to the secured memory region with built-in obfuscation.
 - **Memory Protection:** Allows setting memory protection flags to control read, write, and execute permissions.
 - **Obfuscation:** Data is can be obfuscated using XOR operations to increase security.
 - **Resource Management:** Implements the `Closeable` interface for safe resource management, ensuring sensitive data is cleared from memory when no longer needed.
-
-**Currently only Linux and Mac OS are supported**
 
 ## Usage
 

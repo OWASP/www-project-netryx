@@ -101,7 +101,6 @@ public class Main {
 }
 ```
 
-The time 
 ## HtmlEncoder
 NetArmor provides a simple HTML encoder, that can be used to encode user input, before displaying it on the web page
 and sanitize html from XSS attacks.
