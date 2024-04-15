@@ -210,7 +210,7 @@ public class Main {
 As netty based servers may have different handlers in different order, you should first create NettyServer instance.
 
 By the current date (2024-02-19) following servers are implemented via separate dependencies:
-- [ReactorNettyProvider](../armor-reactor-netty) - For reactor netty based servers.
+- [ReactorNettyProvider](../armor-reactor-netty) - For reactor netty based servers (like Spring Boot Reactive)
 
 We are burning the midnight oil to make NetArmorPipeline available to more Netty based web frameworks,
 but nothing stops you to implement own provider and use it.
