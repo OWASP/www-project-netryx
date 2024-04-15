@@ -16,6 +16,9 @@ Netryx Armor is our flagship module, offering protection tools specifically tail
 - **XSS and Path Traversal Protection**: Guard against Cross-Site Scripting (XSS) and unauthorized path traversal to secure your web applications.
 - **Comprehensive Policy Management**: Manage content security policies, request rate limiting, and IP whitelisting/blacklisting effectively.
 
+Supported Netty server pipelines:
+- [Reactor Netty Provider](/armor-reactor-netty) stands for all **Reactor Netty** based servers and frameworks support (like **Spring Boot Reactive**)
+
 See [Netryx Armor](/armor) for all details.
 
 ### Netryx Memory
