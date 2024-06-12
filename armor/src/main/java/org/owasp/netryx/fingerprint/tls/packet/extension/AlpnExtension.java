@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AlpnExtension extends TlsExtension {
     private final List<String> protocols = new ArrayList<>();
@@ -49,7 +50,7 @@ public class AlpnExtension extends TlsExtension {
         try (var out = new UIntByteArrayOutputStream()) {
             var protocolBytes = protocols.stream()
                     .map(String::getBytes)
-                    .toList();
+                    .collect(Collectors.toList());
 
             var protocolListLength = 0;
 

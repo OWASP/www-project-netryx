@@ -14,9 +14,8 @@ Built for scalability, flexibility, and reliability, NetArmor integrates with Ne
 
 ## Features
 - [x] ReDoS resistant Validators (Custom and implemented like email, credit card, etc.)
-- [x] XSS, Path Transversal protection
+- [x] Injection protection via HTML, JS, LDAP encoders
 - [x] Secure memory allocation and obfuscation for storing sensitive data in cache
-- [x] Powerful password hashing algorithms implemented (Argon2id, BCrypt, SCrypt)
 - [x] Security Policy Management (CSP, XFO, etc.)
 - [x] HTTP/2 0day RST flood protection (see in [Cloudflare Blog](https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/))
 - [x] HTTP Rate Limiting to prevent DoS, brute force attacks etc.
@@ -101,61 +100,113 @@ public class Main {
 }
 ```
 
-## HtmlEncoder
-NetArmor provides a simple HTML encoder, that can be used to encode user input, before displaying it on the web page
-and sanitize html from XSS attacks.
+## Encoders
+NetArmor provides encoders for securing from:
+* XSS injection in HTML and JS contexts
+* LDAP injection
+* Command injection
 
-For sanitizing html, AntiSamy library by OWASP is used: [AntiSamy](https://owasp.org/www-project-antisamy/)
+For html sanitizaion, AntiSamy library by OWASP is used: [AntiSamy](https://owasp.org/www-project-antisamy/)
 
 ### Exception thrown
-- `SanitizationException` - if input is invalid
+- `SanitizationException` - If sanitization fails
+- `IllegalArgumentException` - If null input passed to encoders
 
-### Sample
+### HTML Encoder
+HTML encoder allows you to encode input in several contexts:
+
+* `ALL`: Encodes all characters specified in the string `&<>'"/=``.
+* `CONTENT`: Encodes only &<>.
+* `ATTRIBUTE`: Encodes `&<>'"/=``.
+* `SINGLE_QUOTED_ATTRIBUTE`: Encodes `&<'/=``.
+* `DOUBLE_QUOTED_ATTRIBUTE`: Encodes `&<"/=``.
+
+`ALL` mode is used as default encoding mode, if none is specified.
+
+#### Default encoder
 ```java
 public class Main {
     public static void main(String[] args) {
         NetArmor armor = getNetArmor(); // Implementation of NetArmor
         
-        var encoded = armor.htmlEncoder().encode("<script>alert('XSS')</script>");
-        var sanitizedHtml = armor.htmlEncoder().sanitizeHtml("your html");
+        var encoded = armor.encoder()
+                .html()
+                .encode("<script>alert('XSS')</script>");
+        
+        var sanitizedHtml = armor.encoder()
+                .html()
+                .sanitize("your html");
     }
 }
 ```
+#### Encoder with custom parameters
+To configure HTML Encoder mode and specify custom policy for Antisamy, you should pass `HtmlEncoderConfig` instance to method:
 
-## Password Hashing
-Strong password hashing is one of the most important security features, that every application should have, in order to protect user passwords from being stolen
-or cracked by brute force attacks.
+`HtmlEncoderConfig.withMode(HtmlEncodingMode.ALL)` - Custom encoding mode and default AntiSamy policy
+`HtmlEncoderConfig.withPolicy(Policy)` - Default encoding mode (`ALL`), custom AntiSamy policy
 
-The first and foremost, password hashing algorithm should be slow, so that it takes a lot of time to hash a password,
-never use MD5, SHA1, SHA256, SHA512, etc. for hashing passwords, because they are designed to be fast, and can be cracked easily.
+or just specify both of them:
+`HtmlEncoderConfig.create(HtmlEncodingMode, Policy)`
 
-NetArmor provides a set of password hashing algorithms, that can be used to hash user passwords.
-By 2023, the most secure password algorithms are:
-- `Argon2id`
-- `SCrypt`
-- `BCrypt`
+Please note, that by default `antisamy-slashdot.xml` is used as policy.
 
-Although BCrypt is not the most secure algorithm, it is still secure enough to be used in applications and is popular
-mostly in legacy applications.
-But it is recommended to use `Argon2id` or `SCrypt`, with <b>Argon2id</b> being the most secure algorithm
-if properly configured.
+### JavaScript Encoder
+The JavaScript encoder defines various encoding modes available for different contexts:
 
-All configurations are set to default values, but you can change them, if you want to make them more secure.
-The default password encoder is specified in SecurityConfig instance.
+* `ATTRIBUTE`: Encodes characters suitable for JavaScript attributes. Specially handles quotes and characters that could break out of attribute context.
+* `BLOCK`: Encodes characters for safe inclusion in JavaScript code blocks.
+* `HTML`: Encodes characters suitable for embedding JavaScript within HTML, taking into account characters that are problematic in HTML contexts.
 
-### Sample
+#### Usage
 ```java
-public class Main {
-    public static void main(String[] args) {
-        NetArmor armor = getNetArmor(); // Implementation of NetArmor
-        
-        var password = "password";
-        var hashedPassword = armor.password()
-                .encode(password);
-        
-        var isPasswordValid = armor.password()
-                .matches(password, hashedPassword);
-    }
+public static void main(String[] args) {
+    var armor = NetArmor.create();
+    
+    var encodedInput = armor.encoder()
+            .js(JavaScriptEncoding.ATTRIBUTE)
+            .encode("var str = \"name=John\";");
+}
+```
+
+JavaScript encoder supports ascii-only encoding. To do this, specify `JavaScriptEncoderConfig`:
+```java
+public static void main(String[] args) {
+    var armor = NetArmor.create();
+    var config = JavaScriptEncoderConfig.create(JavaScriptEncoding.HTML, true);
+    
+    var encodedInput = armor.encoder()
+            .js(config)
+            .encode("var str = \"name=John\";");
+}
+```
+
+### LDAP Encoder
+It is used for encoding input strings to be safely used in LDAP distinguished names (DNs) and search filters. 
+This encoder ensures that all potentially dangerous characters are properly encoded to prevent LDAP injection attacks
+
+#### Usage
+```java
+public static void main(String[] args) {
+    var armor = NetArmor.create();
+
+    var encodedInput = armor.encoder()
+            .ldap()
+            .encode("admin(user)");
+}
+```
+
+### Command Encoder
+It is used to for encoding input strings to be safely used in command-line execution. 
+This encoder ensures that all potentially dangerous characters are properly escaped to prevent command injection attacks.
+
+#### Usage
+```java
+public static void main(String[] args) {
+    var armor = NetArmor.create();
+
+    var encodedInput = armor.encoder()
+            .cmd()
+            .encode("unsafe;command");
 }
 ```
 

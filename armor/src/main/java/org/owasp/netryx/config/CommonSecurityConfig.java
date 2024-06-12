@@ -1,18 +1,12 @@
 package org.owasp.netryx.config;
 
-import org.owasp.netryx.encoder.DefaultHtmlEncoder;
-import org.owasp.netryx.encoder.HtmlEncoder;
 import org.owasp.netryx.exception.NotConfiguredFieldException;
 import org.owasp.netryx.exception.UnknownRuleException;
 import org.owasp.netryx.model.CommonConfig;
 import org.owasp.netryx.model.LimiterConfig;
 import org.owasp.netryx.model.ValidatorConfig;
-import org.owasp.netryx.password.config.ArgonConfig;
-import org.owasp.netryx.password.config.BCryptConfig;
-import org.owasp.netryx.password.config.SCryptConfig;
-import org.owasp.netryx.password.constant.EncoderType;
-import org.owasp.netryx.policy.SecurityPolicy;
 import org.owasp.netryx.model.settings.Http1Settings;
+import org.owasp.netryx.policy.SecurityPolicy;
 import org.owasp.netryx.validator.PathValidator;
 import org.owasp.netryx.validator.impl.DefaultPathValidator;
 
@@ -35,11 +29,6 @@ public class CommonSecurityConfig implements SecurityConfig {
 
     public CommonSecurityConfig(CommonConfig config) {
         this.config = config;
-    }
-
-    @Override
-    public EncoderType encoderType() {
-        return config.getEncoderType();
     }
 
     @Override
@@ -73,11 +62,6 @@ public class CommonSecurityConfig implements SecurityConfig {
     }
 
     @Override
-    public HtmlEncoder htmlEncoder() {
-        return new DefaultHtmlEncoder();
-    }
-
-    @Override
     public PathValidator fileValidator() {
         return new DefaultPathValidator(this);
     }
@@ -85,24 +69,6 @@ public class CommonSecurityConfig implements SecurityConfig {
     @Override
     public List<SecurityPolicy> policies() {
         return config.getPolicies();
-    }
-
-    @Override
-    public BCryptConfig bcryptConfig() {
-        return Optional.ofNullable(config.getBcrypt())
-                .orElseThrow(() -> new NotConfiguredFieldException("bcrypt"));
-    }
-
-    @Override
-    public SCryptConfig scryptConfig() {
-        return Optional.ofNullable(config.getScrypt())
-                .orElseThrow(() -> new NotConfiguredFieldException("scrypt"));
-    }
-
-    @Override
-    public ArgonConfig argonConfig() {
-        return Optional.ofNullable(config.getArgon())
-                .orElseThrow(() -> new NotConfiguredFieldException("argon"));
     }
 
     @Override

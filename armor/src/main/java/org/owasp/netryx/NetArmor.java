@@ -4,16 +4,11 @@ import org.owasp.memory.allocator.DefaultMemoryAllocator;
 import org.owasp.memory.allocator.MemoryAllocator;
 import org.owasp.netryx.config.CommonSecurityConfig;
 import org.owasp.netryx.config.SecurityConfig;
-import org.owasp.netryx.encoder.DefaultHtmlEncoder;
-import org.owasp.netryx.encoder.HtmlEncoder;
+import org.owasp.netryx.encoder.DefaultEncoderProvider;
+import org.owasp.netryx.encoder.EncoderProvider;
 import org.owasp.netryx.model.CommonConfig;
-import org.owasp.netryx.password.ArgonPasswordEncoder;
-import org.owasp.netryx.password.BCryptPasswordEncoder;
-import org.owasp.netryx.password.PasswordEncoder;
-import org.owasp.netryx.password.SCryptPasswordEncoder;
-import org.owasp.netryx.validator.DefaultValidator;
-import org.owasp.netryx.validator.Validator;
-import org.owasp.validator.html.Policy;
+import org.owasp.netryx.validator.DefaultValidatorProvider;
+import org.owasp.netryx.validator.ValidatorProvider;
 
 /**
  * NetArmor is the main class of armor framework.
@@ -21,52 +16,25 @@ import org.owasp.validator.html.Policy;
  * @see WebArmor
  */
 public class NetArmor implements WebArmor {
-    private final Validator validator;
-    private final HtmlEncoder htmlEncoder;
+    private final ValidatorProvider validator;
+    private final EncoderProvider encoder;
     private final MemoryAllocator memoryAllocator;
-    private final PasswordEncoder passwordEncoder;
 
-    private NetArmor(SecurityConfig config) {
-        this.validator = new DefaultValidator(config);
-        this.htmlEncoder = new DefaultHtmlEncoder();
+    private NetArmor(SecurityConfig securityConfig) {
+        this.validator = new DefaultValidatorProvider(securityConfig);
+        this.encoder = new DefaultEncoderProvider();
+
         this.memoryAllocator = new DefaultMemoryAllocator();
-
-        switch (config.encoderType()) {
-            case BCRYPT: {
-                this.passwordEncoder = new BCryptPasswordEncoder(config.bcryptConfig());
-                break;
-            }
-            case ARGON: {
-                this.passwordEncoder = new ArgonPasswordEncoder(config.argonConfig());
-                break;
-            }
-            case SCRYPT: {
-                this.passwordEncoder = new SCryptPasswordEncoder(config.scryptConfig());
-                break;
-            }
-            default: throw new IllegalArgumentException("Unsupported password encoder");
-        };
     }
 
     @Override
-    public Validator validator() {
+    public ValidatorProvider validator() {
         return validator;
     }
 
     @Override
-    public HtmlEncoder htmlEncoder() {
-        return htmlEncoder;
-    }
-
-    // There may be different policies for different pages.
-    @Override
-    public HtmlEncoder htmlEncoder(Policy policy) {
-        return new DefaultHtmlEncoder(policy);
-    }
-
-    @Override
-    public PasswordEncoder password() {
-        return passwordEncoder;
+    public EncoderProvider encoder() {
+        return encoder;
     }
 
     @Override
@@ -75,7 +43,11 @@ public class NetArmor implements WebArmor {
     }
 
     public static NetArmor create() {
-        return create(new CommonSecurityConfig(new CommonConfig()));
+        return create(new CommonConfig());
+    }
+
+    public static NetArmor create(CommonConfig config) {
+        return create(new CommonSecurityConfig(config));
     }
 
     public static NetArmor create(SecurityConfig config) {

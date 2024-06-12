@@ -39,7 +39,7 @@ public class Ja4Fingerprint implements TlsFingerprint {
         var ciphers = hello.getCipherSuites().getCiphers()
                 .stream()
                 .map(CipherSuite::getType)
-                .toList();
+                .collect(Collectors.toList());
 
         return filterGrease(ciphers, CipherType::getId);
     }
@@ -53,7 +53,7 @@ public class Ja4Fingerprint implements TlsFingerprint {
 
         var curves = extension.getCurves().stream()
                 .map(EllipticCurve::getType)
-                .toList();
+                .collect(Collectors.toList());
 
         return filterGrease(curves, NamedGroup::getId);
     }
@@ -65,7 +65,7 @@ public class Ja4Fingerprint implements TlsFingerprint {
         var extensions = extension.getExtensions()
                 .stream()
                 .map(TlsExtension::getType)
-                .toList();
+                .collect(Collectors.toList());
 
         return filterGrease(extensions, ExtensionType::getId);
     }
@@ -79,7 +79,7 @@ public class Ja4Fingerprint implements TlsFingerprint {
 
         var formats = extension.getPointFormats().stream()
                 .map(ECPointFormat::getType)
-                .toList();
+                .collect(Collectors.toList());
 
         return filterGrease(formats, ECPointFormatType::getId);
     }
@@ -140,7 +140,7 @@ public class Ja4Fingerprint implements TlsFingerprint {
         var algorithms = signatureAlgorithms.getAlgorithms()
                 .stream()
                 .map(SignatureAlgorithm::getType)
-                .toList();
+                .collect(Collectors.toList());
 
         return filterGrease(algorithms, SignAlgorithm::getId);
     }

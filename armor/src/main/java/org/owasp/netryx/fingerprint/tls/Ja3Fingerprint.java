@@ -124,7 +124,7 @@ public class Ja3Fingerprint implements TlsFingerprint {
     private static List<Integer> listOf(String component) {
         return Arrays.stream(component.split("-"))
                 .map(Integer::valueOf)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private static <T> String join(List<T> list, Function<T, String> stringFunction) {
@@ -180,10 +180,10 @@ public class Ja3Fingerprint implements TlsFingerprint {
         public Ja3Fingerprint build() {
             return new Ja3Fingerprint() {{
                 setTlsVersion(tlsVersion);
-                setCipherSuites(cipherSuites.stream().map(CipherSuite::getId).toList());
-                setExtensions(extensions.stream().map(TlsExtension::id).toList());
-                setNamedGroups(namedGroups.stream().map(EllipticCurve::getId).toList());
-                setPointFormats(pointFormats.stream().map(ECPointFormat::getId).toList());
+                setCipherSuites(cipherSuites.stream().map(CipherSuite::getId).collect(Collectors.toList()));
+                setExtensions(extensions.stream().map(TlsExtension::id).collect(Collectors.toList()));
+                setNamedGroups(namedGroups.stream().map(EllipticCurve::getId).collect(Collectors.toList()));
+                setPointFormats(pointFormats.stream().map(ECPointFormat::getId).collect(Collectors.toList()));
             }};
         }
     }

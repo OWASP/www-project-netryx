@@ -1,4 +1,7 @@
-package org.owasp.netryx.encoder;
+package org.owasp.netryx.encoder.impl;
+
+import org.owasp.netryx.encoder.InputEncoder;
+import org.owasp.netryx.encoder.impl.DefaultHtmlEncoder;
 
 /**
  * HtmlEncoder
@@ -9,10 +12,6 @@ package org.owasp.netryx.encoder;
  *
  * @see DefaultHtmlEncoder
  */
-public interface HtmlEncoder {
-    // Encode input string to be used in HTML.
-    String encode(String input);
-
-    //
+public interface HtmlEncoder extends InputEncoder {
     String sanitize(String html);
 }

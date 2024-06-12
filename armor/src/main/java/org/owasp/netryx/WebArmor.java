@@ -1,19 +1,13 @@
 package org.owasp.netryx;
 
 import org.owasp.memory.allocator.MemoryAllocator;
-import org.owasp.netryx.encoder.HtmlEncoder;
-import org.owasp.netryx.password.PasswordEncoder;
-import org.owasp.netryx.validator.Validator;
-import org.owasp.validator.html.Policy;
+import org.owasp.netryx.encoder.EncoderProvider;
+import org.owasp.netryx.validator.ValidatorProvider;
 
 public interface WebArmor {
-    Validator validator();
+    ValidatorProvider validator();
 
-    HtmlEncoder htmlEncoder();
-
-    HtmlEncoder htmlEncoder(Policy policy);
-
-    PasswordEncoder password();
+    EncoderProvider encoder();
 
     MemoryAllocator memory();
 }

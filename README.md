@@ -9,14 +9,16 @@ Let's see what we offer:
 # Netryx Modules
 ### Netryx Armor
 
-Netryx Armor is our flagship module, offering protection tools specifically tailored for Netty based servers. This includes:
+Netryx Armor is our flagship module, offering protection tools. This includes:
 - **HTTP/2 0day RST Flood Protection**: Safeguard your applications against zero-day reset (RST) flood attacks in HTTP/2.
 - **HTTP/2, JA3, JA4, and JA4H Fingerprinting**: Utilize advanced fingerprinting techniques to detect and analyze patterns that help in identifying potential threats.
 - **ReDoS Protected Validators**: Safely validate user inputs without the risk of Regular Expression Denial of Service (ReDoS) attacks.
-- **XSS and Path Traversal Protection**: Guard against Cross-Site Scripting (XSS) and unauthorized path traversal to secure your web applications.
+- **Robust Encoders**: HTML, JS, LDAP and CMD encoders to protect from various injection attacks
 - **Comprehensive Policy Management**: Manage content security policies, request rate limiting, and IP whitelisting/blacklisting effectively.
 
-Supported Netty server pipelines:
+Pipeline features (like JA4 Fingerprinting) is available only for **Netty** based servers.
+
+Currently supported Netty server pipelines:
 - [Reactor Netty Provider](/armor-reactor-netty) stands for all **Reactor Netty** based servers and frameworks support (like **Spring Boot Reactive**)
 
 See [Netryx Armor](/armor) for all details.

@@ -3,9 +3,9 @@ package org.owasp.netryx.fingerprint.request;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.bouncycastle.util.encoders.Hex;
 import org.owasp.netryx.constant.HttpProtocol;
 import org.owasp.netryx.util.Hash;
+import org.owasp.netryx.util.Hex;
 
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class Ja4hFingerprint {
     }
 
     public String getValue() {
-        return "%s_%s_%s_%s".formatted(generateJa4ha(), generateJa4hb(), generateJa4hc(), generateJa4hd());
+        return String.format("%s_%s_%s_%s", generateJa4ha(), generateJa4hb(), generateJa4hc(), generateJa4hd());
     }
 
     private String generateJa4ha() {

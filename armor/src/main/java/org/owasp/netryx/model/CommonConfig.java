@@ -1,11 +1,7 @@
 package org.owasp.netryx.model;
 
-import org.owasp.netryx.password.config.ArgonConfig;
-import org.owasp.netryx.password.config.BCryptConfig;
-import org.owasp.netryx.password.config.SCryptConfig;
-import org.owasp.netryx.password.constant.EncoderType;
-import org.owasp.netryx.policy.*;
 import org.owasp.netryx.model.settings.Http1Settings;
+import org.owasp.netryx.policy.*;
 import org.owasp.netryx.util.PatternUtil;
 
 import java.util.ArrayList;
@@ -17,15 +13,10 @@ public class CommonConfig {
     private boolean limitRapidReset = true;
     private boolean enableSecurityPolicy = true;
 
-    private EncoderType encoderType = EncoderType.ARGON;
     private Map<String, String> patterns = PatternUtil.loadDefaults();
     private String baseDirectory = null;
 
     private ValidatorConfig validator = new ValidatorConfig();
-
-    private BCryptConfig bcrypt = new BCryptConfig();
-    private SCryptConfig scrypt = new SCryptConfig();
-    private ArgonConfig argon = new ArgonConfig();
 
     private LimiterConfig requestLimiter = new LimiterConfig();
     private LimiterConfig resetStreamLimiter = new LimiterConfig();
@@ -38,10 +29,6 @@ public class CommonConfig {
             new FrameOptions(), new ReferrerPolicy(),
             new StrictTransportPolicy(), new XssProtection()
     ));
-
-    public void setEncoderType(EncoderType encoderType) {
-        this.encoderType = encoderType;
-    }
 
     public void setPatterns(Map<String, String> patterns) {
         this.patterns = patterns;
@@ -61,18 +48,6 @@ public class CommonConfig {
 
     public void setResetStreamLimiter(LimiterConfig resetStreamLimiter) {
         this.resetStreamLimiter = resetStreamLimiter;
-    }
-
-    public void setArgon(ArgonConfig argon) {
-        this.argon = argon;
-    }
-
-    public void setBcrypt(BCryptConfig bcrypt) {
-        this.bcrypt = bcrypt;
-    }
-
-    public void setScrypt(SCryptConfig scrypt) {
-        this.scrypt = scrypt;
     }
 
     public void setPolicies(List<SecurityPolicy> policies) {
@@ -113,22 +88,6 @@ public class CommonConfig {
 
     public ValidatorConfig getValidator() {
         return validator;
-    }
-
-    public EncoderType getEncoderType() {
-        return encoderType;
-    }
-
-    public ArgonConfig getArgon() {
-        return argon;
-    }
-
-    public BCryptConfig getBcrypt() {
-        return bcrypt;
-    }
-
-    public SCryptConfig getScrypt() {
-        return scrypt;
     }
 
     public List<SecurityPolicy> getPolicies() {

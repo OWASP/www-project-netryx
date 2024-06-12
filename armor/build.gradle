@@ -1,17 +1,15 @@
 plugins {
     id 'java'
     id 'java-library'
+    id 'maven-publish'
+    id 'signing'
 }
 
-group = 'org.owasp'
-version = '1.0.1'
+group = 'org.owasp.netryx'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-
-    maven {
-        url("https://maven.exploit.org")
-    }
 }
 
 dependencies {
@@ -21,15 +19,19 @@ dependencies {
     api project(":memory")
     api 'org.owasp.antisamy:antisamy:1.7.5'
 
-    implementation 'org.apache.commons:commons-text:1.11.0'
-
     implementation 'io.netty:netty-codec-http2:4.1.101.Final'
     implementation 'io.netty:netty-common:4.1.101.Final'
 
     implementation 'io.projectreactor:reactor-core:3.6.0'
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
     implementation 'org.slf4j:slf4j-api:2.0.9'
 }
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+def isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 jar {
     setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
@@ -39,6 +41,67 @@ jar {
     }
 }
 
-test {
+publishing {
+    repositories {
+        maven {
+            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            name = "OSSRH"
+            url = isReleaseVersion ? releaseRepo : snapshotRepo
+
+            credentials {
+                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                groupId = 'org.owasp.netryx'
+                name = 'armor'
+                description = 'Advanced Java web security framework'
+                url = 'https://github.com/OWASP/www-project-netryx'
+                packaging = 'jar'
+
+                licenses {
+                    license {
+                        name = 'BSD-2 Clause License'
+                        url = 'https://github.com/OWASP/www-project-netryx?tab=BSD-2-Clause-1-ov-file'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/OWASP/www-project-netryx'
+                    connection = 'scm:git:git://github.com/OWASP/www-project-netryx.git'
+                    developerConnection = 'scm:git:git://github.com/OWASP/www-project-netryx.git'
+                }
+
+                developers {
+                    developer {
+                        id = 'satira'
+                        name = 'Rauf Aliyev'
+                        email = 'r.aliyev@exploit.org'
+                        organizationUrl = 'https://exploit.org'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign).configureEach {
+    onlyIf { isReleaseVersion }
+}
+
+tasks.test {
     useJUnitPlatform()
 }
