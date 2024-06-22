@@ -1,12 +1,19 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+    id 'signing'
 }
 
-group = 'org.owasp'
+group = 'org.owasp.netryx'
 version = '1.0.0'
 
 repositories {
     mavenCentral()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -15,6 +22,80 @@ dependencies {
 
     compileOnly 'io.projectreactor.netty:reactor-netty-http:1.1.13'
     compileOnly project(":armor")
+}
+
+def isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+jar {
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact sourcesJar
+            artifact javadocJar
+            artifact jar
+
+            pom {
+                groupId = 'org.owasp.netryx'
+                artifactId = 'reactor-netty-provider'
+                version = '1.0.0'
+                name = 'OWASP Netryx Rector Netty Provider'
+                description = 'Reactor Netty provider for Netryx Armor Pipeline'
+                url = 'https://github.com/OWASP/www-project-netryx'
+
+                licenses {
+                    license {
+                        name = 'BSD-2 Clause License'
+                        url = 'https://github.com/OWASP/www-project-netryx?tab=BSD-2-Clause-1-ov-file'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/OWASP/www-project-netryx'
+                    connection = 'scm:git:git://github.com/OWASP/www-project-netryx.git'
+                    developerConnection = 'scm:git:git://github.com/OWASP/www-project-netryx.git'
+                }
+
+                developers {
+                    developer {
+                        id = 'satira'
+                        name = 'Rauf Aliyev'
+                        email = 'r.aliyev@exploit.org'
+                        organizationUrl = 'https://exploit.org'
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            name = "OSSRH"
+            url = isReleaseVersion ? releaseRepo : snapshotRepo
+
+            credentials {
+                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign).configureEach {
+    onlyIf { isReleaseVersion }
 }
 
 test {

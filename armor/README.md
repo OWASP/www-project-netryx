@@ -1,41 +1,44 @@
 # Netryx Armor
 ## Introduction
-**Netryx Armor** (further NetArmor) is a <b>reactive</b> enterprise security solution designed for today’s dynamic digital environments. Blending the best of ESAPI and OWASP Top 10, NetArmor is tailored for Netty-based applications, providing a robust defense layer especially for high-risk sectors, including finance.
+Netryx Armor (**NetArmor**) is a reactive security solution for modern digital environments. It combines ESAPI features and is designed for Netty-based applications, offering strong protection for high-risk areas like finance.
 
-Built for scalability, flexibility, and reliability, NetArmor integrates with Netty based web frameworks, ensuring your network is safeguarded against evolving threats. Its developer-friendly interfaces simplify solving security problems, making enterprise-grade security accessible to all.
+NetArmor is built to be scalable, flexible, and reliable. It easily integrates with Netty-based web frameworks to keep your network safe from new threats. 
+Developer-friendly interfaces make it simple to solve security issues, bringing enterprise-level security to everyone.
+
+## Dependency
+### Gradle
+```groovy
+implementation "org.owasp.netryx:armor:1.0.0"
+```
+### Maven
+```xml
+<dependency>
+    <groupId>org.owasp.netryx</groupId>
+    <artifactId>armor</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ## Notes
-- **Continual Evolution**: Stay ahead with regular updates, as NetArmor grows every day.
-- **Innovative AI-Based IDS**: Coming soon - an AI-driven intrusion detection system for enhanced security.
-- **Join the NetArmor Movement**: Contribute and collaborate as we strive to set new benchmarks in Netty-based application security.
-- **Code Quality & Contribution**: We adhere to stringent code quality standards. Join us in our commitment to security excellence.
-- **Holistic Security Approach**: Remember, security is an ongoing journey. NetArmor is a vital component, but it’s part of a larger security strategy.
-- **Community-Driven Development**: We believe in “Building Security Together”. Your feedback and contributions are invaluable.
+- **Continual Evolution**: Keep up with regular updates as NetArmor improves daily.
+- **Join the NetArmor Movement**: Be a part of our community, contributing and collaborating to enhance security for Netty-based applications.
+- **Code Quality & Contribution**: We follow strict code quality standards. Join us in our dedication to excellent security.
+- **Holistic Security Approach**: Security is a continuous journey. NetArmor is an important part, but it fits into a broader security strategy.
+- **Community-Driven Development**: We believe in "Building Security Together". Your feedback and contributions are essential.
 
 ## Features
 - [x] ReDoS resistant Validators (Custom and implemented like email, credit card, etc.)
 - [x] Injection protection via HTML, JS, LDAP encoders
-- [x] Secure memory allocation and obfuscation for storing sensitive data in cache
+- [x] Secure memory allocation and obfuscation for storing sensitive data in cache via Netryx Memory
 - [x] Security Policy Management (CSP, XFO, etc.)
 - [x] HTTP/2 0day RST flood protection (see in [Cloudflare Blog](https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/))
 - [x] HTTP Rate Limiting to prevent DoS, brute force attacks etc.
 - [x] IP Whitelisting/Blacklisting
 - [x] JA3 TLS fingerprinting
-- [x] JA4 TLS fingerprinting
+- [x] JA4 fingerprinting
 - [x] JA4_H HttpClient fingerprinting
 - [x] HTTP/2 fingerprinting
 - [x] Intrusion Detection System (IDS)
-
-### Reactive components:
-- Blacklisting
-- Whitelisting
-- Intrusion Detection System (IDS)
-- TLS (JA3) Fingerprinting
-- HTTP/2 Fingerprinting
-
-You can read a series of articles on our [BLOG](https://blog.exploit.org) for diving into cybersecurity world,
-including articles under **Beyond The Code** label for application security, which also include how security features
-supported by NetArmor can help you in security tasks.
 
 # NetArmor Basic Features
 First of all, you need to create a NetArmor instance.

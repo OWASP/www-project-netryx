@@ -1,7 +1,7 @@
 package org.owasp.netryx;
 
-import org.owasp.memory.allocator.DefaultMemoryAllocator;
-import org.owasp.memory.allocator.MemoryAllocator;
+import org.owasp.netryx.memory.allocator.DefaultMemoryAllocator;
+import org.owasp.netryx.memory.allocator.MemoryAllocator;
 import org.owasp.netryx.config.CommonSecurityConfig;
 import org.owasp.netryx.config.SecurityConfig;
 import org.owasp.netryx.encoder.DefaultEncoderProvider;

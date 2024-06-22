@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.owasp.netryx'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
@@ -42,31 +42,19 @@ jar {
 }
 
 publishing {
-    repositories {
-        maven {
-            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-
-            name = "OSSRH"
-            url = isReleaseVersion ? releaseRepo : snapshotRepo
-
-            credentials {
-                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
-                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
-            }
-        }
-    }
-
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            artifact jar
 
             pom {
                 groupId = 'org.owasp.netryx'
-                name = 'armor'
-                description = 'Advanced Java web security framework'
+                artifactId = 'armor'
+                version = '1.0.0'
+                name = 'OWASP Netryx Armor'
+                description = 'Advanced web security framework for Java'
                 url = 'https://github.com/OWASP/www-project-netryx'
-                packaging = 'jar'
 
                 licenses {
                     license {
@@ -92,6 +80,21 @@ publishing {
             }
         }
     }
+
+    repositories {
+        maven {
+            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            name = "OSSRH"
+            url = isReleaseVersion ? releaseRepo : snapshotRepo
+
+            credentials {
+                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
 }
 
 signing {
@@ -102,6 +105,6 @@ tasks.withType(Sign).configureEach {
     onlyIf { isReleaseVersion }
 }
 
-tasks.test {
+test {
     useJUnitPlatform()
 }

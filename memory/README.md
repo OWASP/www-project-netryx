@@ -10,7 +10,20 @@ This library securely handles sensitive data in memory, offering tools to manage
 - **Obfuscation:** Data is can be obfuscated using XOR operations to increase security.
 - **Resource Management:** Implements the `Closeable` interface for safe resource management, ensuring sensitive data is cleared from memory when no longer needed.
 
-## Usage
+## Dependency
+Please note, that if you use **Netryx Armor**, you don't need to specify this dependency explicitly.
+### Gradle
+```groovy
+implementation "org.owasp.netryx:memory:1.0.0"
+```
+### Maven
+```xml
+<dependency>
+    <groupId>org.owasp.netryx</groupId>
+    <artifactId>memory</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ### Initialization
 Create a new instance of `SecureMemory` by specifying the size of the memory region you want to allocate. The constructor ensures that the memory is allocated securely and locked immediately to prevent paging.

@@ -2,6 +2,20 @@
 ## Reactor Netty Provider
 This provider is used to integrate NetArmor Enhanced security features to Reactor Netty based servers.
 
+## Dependency
+### Gradle
+```groovy
+implementation "org.owasp.netryx:reactor-netty-provider:1.0.0"
+```
+### Maven
+```xml
+<dependency>
+    <groupId>org.owasp.netryx</groupId>
+    <artifactId>reactor-netty-provider</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 ### Examples:
 #### Spring Boot Reactive
 ```java
@@ -11,11 +25,11 @@ public class NetArmorCustomizer implements NettyServerCustomizer {
     public HttpServer apply(HttpServer server) {
         CommonSecurityConfig config = new CommonSecurityConfig(new CommonConfig());
 
-        NetArmorPipeline armorPipeline = NetArmorPipeline.newBuilder(new ReactorNettyProvider(config))
+        NetArmorPipeline armor = NetArmorPipeline.newBuilder(new ReactorNettyProvider(config))
             .intrusion(new MyIntrusionHandler()) // add your handlers
             .build();
 
-        return armorPipeline.pipeline().configure(server);
+        return armor.pipeline().configure(server);
     }
 }
 ```

@@ -4,22 +4,22 @@ plugins {
     id 'signing'
 }
 
-group = 'org.owasp'
-version = '1.0.0-SNAPSHOT'
+group = 'org.owasp.netryx'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'net.java.dev.jna:jna:5.13.0'
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 def isReleaseVersion = !version.endsWith("SNAPSHOT")
@@ -32,48 +32,20 @@ jar {
     }
 }
 
-task printComponents {
-    doLast {
-        components.each { component ->
-            println "Component: ${component.name}"
-            if (component instanceof AdhocComponentWithVariants) {
-                component.usages.each { usage ->
-                    println "  Usage: ${usage.name}"
-                    usage.artifacts.each { artifact ->
-                        println "    Artifact: ${artifact.file}"
-                    }
-                }
-            }
-        }
-    }
-}
-
 publishing {
-    repositories {
-        maven {
-            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-
-            name = "OSSRH"
-            url = isReleaseVersion ? releaseRepo : snapshotRepo
-
-            credentials {
-                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
-                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
-            }
-        }
-    }
-
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            artifact jar
 
             pom {
                 groupId = 'org.owasp.netryx'
+                artifactId = 'memory'
+                version = '1.0.0'
                 name = 'memory'
                 description = 'Secure memory regions for Java applications'
                 url = 'https://github.com/OWASP/www-project-netryx'
-                packaging = 'jar'
 
                 licenses {
                     license {
@@ -96,6 +68,21 @@ publishing {
                         organizationUrl = 'https://exploit.org'
                     }
                 }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            name = "OSSRH"
+            url = isReleaseVersion ? releaseRepo : snapshotRepo
+
+            credentials {
+                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
             }
         }
     }
