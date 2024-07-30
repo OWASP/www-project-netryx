@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.owasp.netryx'
+version = '0.0.1-BETA'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'org.ejml:ejml-all:0.43.1'
+}
+
+test {
+    useJUnitPlatform()
+}

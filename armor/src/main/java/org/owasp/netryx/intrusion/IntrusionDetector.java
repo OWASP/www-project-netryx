@@ -1,11 +1,12 @@
 package org.owasp.netryx.intrusion;
 
 import org.owasp.netryx.constant.HandleCode;
-import org.owasp.netryx.mitigation.intrusion.model.IntrusionDetectionData;
+import org.owasp.netryx.constant.IntrusionPhase;
 import org.owasp.netryx.mitigation.intrusion.IntrusionChannelHandler;
 import org.owasp.netryx.mitigation.intrusion.collector.Http2FingerprintCollector;
 import org.owasp.netryx.mitigation.intrusion.collector.RemoteAddressCollector;
 import org.owasp.netryx.mitigation.intrusion.collector.TlsFingerprintCollector;
+import org.owasp.netryx.mitigation.intrusion.model.IntrusionDetectionData;
 import reactor.core.publisher.Mono;
 
 /**
@@ -30,7 +31,7 @@ import reactor.core.publisher.Mono;
  * @see IntrusionChannelHandler
  */
 public interface IntrusionDetector {
-    Mono<DetectionResult> detect(IntrusionDetectionData data);
+    Mono<DetectionResult> detect(IntrusionPhase phase, IntrusionDetectionData data);
 
     // Will be called if the request is detected as malicious or suspicious
     Mono<HandleCode> onDetected(DetectionResult result);

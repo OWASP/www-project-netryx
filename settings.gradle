@@ -1,2 +1,7 @@
 include ':armor', ':memory'
 include 'armor-reactor-netty'
+include 'waf'
+include 'events'
+include 'classifier'
+include 'mlcore'
+

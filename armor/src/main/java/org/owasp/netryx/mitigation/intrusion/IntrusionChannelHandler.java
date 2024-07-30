@@ -3,6 +3,7 @@ package org.owasp.netryx.mitigation.intrusion;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
+import org.owasp.netryx.constant.IntrusionPhase;
 import org.owasp.netryx.intrusion.DetectionResult;
 import org.owasp.netryx.intrusion.IntrusionDetector;
 import org.owasp.netryx.mitigation.intrusion.constant.DetectCode;
@@ -45,7 +46,7 @@ public class IntrusionChannelHandler extends ChannelInboundHandlerAdapter {
 
     // Handling reactive detection with subscribing on netty event executor for thread-safety
     private void handleIntrusionDetection(ChannelHandlerContext ctx, Object msg, IntrusionDetectionData data) {
-        detector.detect(data)
+        detector.detect(IntrusionPhase.REQUEST, data)
                 .flatMap(this::processDetectionResult)
                 .subscribeOn(Schedulers.fromExecutor(ctx.executor()))
                 .subscribe(

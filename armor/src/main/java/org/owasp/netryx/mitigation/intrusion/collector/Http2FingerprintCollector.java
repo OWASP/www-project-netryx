@@ -2,35 +2,80 @@ package org.owasp.netryx.mitigation.intrusion.collector;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http2.Http2HeadersFrame;
-import io.netty.handler.codec.http2.Http2PriorityFrame;
-import io.netty.handler.codec.http2.Http2SettingsFrame;
-import io.netty.handler.codec.http2.Http2WindowUpdateFrame;
+import io.netty.handler.codec.http2.*;
+import org.owasp.netryx.constant.IntrusionPhase;
 import org.owasp.netryx.fingerprint.http2.PriorityFrame;
+import org.owasp.netryx.intrusion.IntrusionDetector;
 import org.owasp.netryx.mitigation.intrusion.model.IntrusionDetectionData;
+import org.owasp.netryx.util.ChannelUtil;
 
 public class Http2FingerprintCollector extends ChannelInboundHandlerAdapter {
+    private final IntrusionDetector detector;
     private final IntrusionDetectionData collector;
 
-    public Http2FingerprintCollector(IntrusionDetectionData collector) {
+    public Http2FingerprintCollector(IntrusionDetector detector, IntrusionDetectionData collector) {
+        this.detector = detector;
         this.collector = collector;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof Http2SettingsFrame)
-            processSettingsFrame((Http2SettingsFrame) msg);
+            handleSettingsFrame(ctx, (Http2SettingsFrame) msg);
+        else if (msg instanceof Http2WindowUpdateFrame)
+            handleWindowUpdateFrame(ctx, (Http2WindowUpdateFrame) msg);
+        else if (msg instanceof Http2PriorityFrame)
+            handlePriorityFrame(ctx, (Http2PriorityFrame) msg);
+        else if (msg instanceof Http2HeadersFrame)
+            handleHeadersFrame(ctx, (Http2HeadersFrame) msg);
+        else if (msg instanceof Http2DataFrame)
+            handleDataFrame(ctx, (Http2DataFrame) msg);
+        else
+            super.channelRead(ctx, msg);
+    }
 
-        if (msg instanceof Http2WindowUpdateFrame)
-            processWindowUpdate((Http2WindowUpdateFrame) msg);
+    private void handleSettingsFrame(ChannelHandlerContext ctx, Http2SettingsFrame frame) throws Exception {
+        processSettingsFrame(frame);
+        super.channelRead(ctx, frame);
+    }
 
-        if (msg instanceof Http2PriorityFrame)
-            processPriorityFrame((Http2PriorityFrame) msg);
+    private void handleWindowUpdateFrame(ChannelHandlerContext ctx, Http2WindowUpdateFrame frame) throws Exception {
+        processWindowUpdate(frame);
+        super.channelRead(ctx, frame);
+    }
 
-        if (msg instanceof Http2HeadersFrame)
-            processHeaders((Http2HeadersFrame) msg);
+    private void handlePriorityFrame(ChannelHandlerContext ctx, Http2PriorityFrame frame) throws Exception {
+        processPriorityFrame(frame);
+        super.channelRead(ctx, frame);
+    }
 
-        super.channelRead(ctx, msg);
+    private void handleHeadersFrame(ChannelHandlerContext ctx, Http2HeadersFrame frame) throws Exception {
+        processHeaders(frame);
+
+        ChannelUtil.handleChannelIntrusion(ctx, collector, detector, IntrusionPhase.HEADERS,
+                (context) -> channelRead0(context, frame));
+
+        if (frame.isEndStream())
+            ChannelUtil.handleChannelIntrusion(ctx, collector, detector, IntrusionPhase.HTTP2,
+                    (context) -> channelRead0(context, frame));
+        else
+            super.channelRead(ctx, frame);
+    }
+
+    private void handleDataFrame(ChannelHandlerContext ctx, Http2DataFrame frame) throws Exception {
+        if (frame.isEndStream())
+            ChannelUtil.handleChannelIntrusion(ctx, collector, detector, IntrusionPhase.HTTP2,
+                    (context) -> channelRead0(context, frame));
+        else
+            super.channelRead(ctx, frame);
+    }
+
+    private void channelRead0(ChannelHandlerContext ctx, Object msg) {
+        try {
+            super.channelRead(ctx, msg);
+        } catch (Exception e) {
+            ctx.fireExceptionCaught(e);
+        }
     }
 
     private void processSettingsFrame(Http2SettingsFrame frame) {

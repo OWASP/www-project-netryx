@@ -51,9 +51,9 @@ public class IntrusionMitigationHandler implements MitigationHandler {
 
     private void configureChannel(NettyServerProvider<?> server, ChannelPipeline pipeline) {
         server.addBeforeHttpRequestHandler(pipeline, HTTP_PROTOCOL_DETECTOR, new HttpProtocolDetector(sharedCollector));
-        server.addFirst(pipeline, REMOTE_ADDRESS, new RemoteAddressCollector(sharedCollector));
-        server.addBeforeSslHandler(pipeline, TLS_FINGERPRINT, new TlsFingerprintCollector(sharedCollector));
-        server.addBeforeHttp2Handler(pipeline, HTTP2_FINGERPRINT, new Http2FingerprintCollector(sharedCollector));
+        server.addFirst(pipeline, REMOTE_ADDRESS, new RemoteAddressCollector(detector, sharedCollector));
+        server.addBeforeSslHandler(pipeline, TLS_FINGERPRINT, new TlsFingerprintCollector(detector, sharedCollector));
+        server.addBeforeHttp2Handler(pipeline, HTTP2_FINGERPRINT, new Http2FingerprintCollector(detector, sharedCollector));
     }
 
     private void configureConnection(NettyServerProvider<?> server, ChannelPipeline pipeline) {

@@ -6,7 +6,7 @@ It was created to help developers make their web applications more secure and ef
 
 Let's see what we offer:
 
-# Netryx Modules
+## Netryx Modules
 ### Netryx Armor
 
 Netryx Armor is our flagship module, offering protection tools. This includes:
@@ -23,22 +23,46 @@ Currently supported Netty server pipelines:
 
 See [Netryx Armor](/armor) for all details.
 
+### Netryx WAF
+**Secure By Default**\
+**Under Active Development**
+
+Reactive AI-based Firewall designed to protect Netty-based applications against threats with minimum effort. It allows defining comprehensive rules, including AI conditions, JA3, JA4, and HTTP/2 fingerprints. Passively defends your application from various threats, including SQL Injection, XSS Injection, and more, ensuring robust API security.
+
+Check road map here: [Netryx WAF](/waf)
+
+### Netryx ML
+**Under Active Development**
+
+Lightweight Machine Learning library for learning and running models in an intensive environment. Utilized in Netryx WAF for mitigating threats.
+
+Implements following algorithms:
+- **Linear Regression**
+- **Logistic Regression**
+- **kNN**
+- **Kernel SVM**
+- **Naive Bayes**
+- **Decision Trees**
+- **Random Forest**
+- **Gradient Boosting**
+
+Check road map here: [Netryx ML](/mlcore)
+
 ### Netryx Memory
-Included within Netryx Armor but also available separately, Netryx Memory is a Java-based library that manages sensitive data securely in memory using native interface:
+Netryx Memory manages sensitive data securely in memory using native interface:
 - **Secure Memory Allocation and Deallocation**: Handle memory operations securely without your data being swapped to disk or leaked.
 - **Data Obfuscation**: Read and write operations are obfuscated to enhance security.
 - **Memory Protection**: Protect memory regions from unauthorized READ/WRITE/EXEC operations.
 
 For further information, see [Netryx Memory](/memory).
 
-### Netryx AntiBot
-**Coming soon**
+### Netryx Events
+Zero dependency event manager designed to building even-based applications. Used by Netryx WAF for Security Events management.
 
-A dedicated AI module designed to protect your application against bot attacks, based
-on Netryx Armor's fingerprinting modules.
+Check it here: [Netryx Events](/events)
 
 # Education materials
-Find articles here: [Educational Content](educational-content) 
+Find articles here: [OWASP Path To Secure Software series](educational-content) 
 
 # Contact
 For security concerns or to discuss potential features that you'd prefer not to disclose publicly, please reach out to us at: `security@exploit.org`.

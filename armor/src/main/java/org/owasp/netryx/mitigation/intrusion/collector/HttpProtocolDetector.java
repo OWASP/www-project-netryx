@@ -7,8 +7,6 @@ import org.owasp.netryx.constant.HttpProtocol;
 import org.owasp.netryx.mitigation.intrusion.model.IntrusionDetectionData;
 
 public class HttpProtocolDetector extends ChannelInboundHandlerAdapter {
-    private static final String NAME = "httpProtocolDetector";
-
     private final IntrusionDetectionData collector;
 
     public HttpProtocolDetector(IntrusionDetectionData collector) {
