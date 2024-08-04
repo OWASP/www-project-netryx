@@ -5,7 +5,12 @@ import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
 import org.owasp.netryx.mlcore.prediction.ClassificationPrediction;
+import org.owasp.netryx.mlcore.serialize.component.InstanceLabelMapComponent;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,5 +102,22 @@ public class KNNClassifier implements Classifier {
 
     public static KNNClassifier create(int k) {
         return new KNNClassifier(k);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+
+        new InstanceLabelMapComponent(instanceLabelMap)
+                .save(out);
+
+        kdTree.save(out);
+
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+
     }
 }

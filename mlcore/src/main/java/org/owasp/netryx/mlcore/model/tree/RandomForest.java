@@ -5,7 +5,11 @@ import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
 import org.owasp.netryx.mlcore.prediction.LabelPrediction;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +19,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class RandomForest implements Regressor {
+    private final Object lock = new Object();
+
     public static final String HYPER_PARAM_NUM_TREES = "numTrees";
     public static final String HYPER_PARAM_MAX_DEPTH = "maxDepth";
     public static final String HYPER_PARAM_MIN_SAMPLES_SPLIT = "minSamplesSplit";
@@ -25,9 +31,12 @@ public class RandomForest implements Regressor {
     private final IntegerHyperParameter minSamplesSplit;
     private final IntegerHyperParameter numFeatures;
 
-    private final List<DecisionTree> trees;
+    private List<DecisionTree> trees = new ArrayList<>();
+
     private final ExecutorService executor;
-    private final Random random;
+
+    private long randomState;
+    private Random random;
 
     private RandomForest(int numTrees, int maxDepth, int minSamplesSplit, int numFeatures, int parallelism, Long randomState) {
         this.numTrees = new IntegerHyperParameter(numTrees, HYPER_PARAM_NUM_TREES);
@@ -35,9 +44,10 @@ public class RandomForest implements Regressor {
         this.minSamplesSplit = new IntegerHyperParameter(minSamplesSplit, HYPER_PARAM_MIN_SAMPLES_SPLIT);
         this.numFeatures = new IntegerHyperParameter(numFeatures, HYPER_PARAM_NUM_FEATURES);
 
-        this.trees = new ArrayList<>();
         this.executor = Executors.newFixedThreadPool(parallelism);
-        this.random = randomState == null ? new Random() : new Random(randomState);
+        this.randomState = randomState == null ? DEFAULT_RANDOM_SATE : randomState;
+
+        this.random = new Random(this.randomState);
     }
 
     @Override
@@ -50,7 +60,7 @@ public class RandomForest implements Regressor {
                 var tree = new DecisionTree(maxDepth.getValue(), minSamplesSplit.getValue());
                 tree.fit(bootstrapSample[0], bootstrapSample[1]);
 
-                synchronized (trees) {
+                synchronized (lock) {
                     trees.add(tree);
                 }
             }, executor));
@@ -110,6 +120,50 @@ public class RandomForest implements Regressor {
         return newBuilder().build();
     }
 
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+        numTrees.save(out);
+        maxDepth.save(out);
+        minSamplesSplit.save(out);
+        numFeatures.save(out);
+        out.writeLong(randomState);
+
+        out.writeInt(trees.size());
+        for (var tree : trees)
+            tree.save(out);
+
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
+
+        numTrees.load(in);
+        maxDepth.load(in);
+        minSamplesSplit.load(in);
+        numFeatures.load(in);
+
+        var randomState = in.readLong();
+
+        var size = in.readInt();
+        var trees = new ArrayList<DecisionTree>(size);
+
+        for (int i = 0; i < size; i++) {
+            var tree = new DecisionTree(0, 0);
+            tree.load(in);
+
+            trees.add(tree);
+        }
+
+        this.trees = trees;
+        this.randomState = randomState;
+        this.random = new Random(randomState);
+
+        MLFlag.ensureEndModel(in.readInt());
+    }
+
     public static class RandomForestBuilder {
         private int numTrees = 10;
         private int maxDepth = 5;
@@ -152,4 +206,6 @@ public class RandomForest implements Regressor {
             return new RandomForest(numTrees, maxDepth, minSamplesSplit, numFeatures, parallelism, randomState);
         }
     }
+
+    public static final long DEFAULT_RANDOM_SATE = 94295;
 }

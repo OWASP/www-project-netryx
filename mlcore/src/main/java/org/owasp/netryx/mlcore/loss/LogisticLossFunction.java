@@ -2,6 +2,10 @@ package org.owasp.netryx.mlcore.loss;
 
 import org.ejml.simple.SimpleMatrix;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class LogisticLossFunction implements LossFunction {
     @Override
     public SimpleMatrix predict(SimpleMatrix X, SimpleMatrix coefficients) {
@@ -31,5 +35,15 @@ public class LogisticLossFunction implements LossFunction {
             }
         }
         return result;
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        // nothing to store
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        // nothing to store
     }
 }

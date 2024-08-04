@@ -3,7 +3,11 @@ package org.owasp.netryx.mlcore.regularization;
 import org.ejml.simple.SimpleMatrix;
 import org.owasp.netryx.mlcore.params.DoubleHyperParameter;
 import org.owasp.netryx.mlcore.params.HyperParameter;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,6 +21,10 @@ public class ElasticNetRegularization implements Regularization {
     public ElasticNetRegularization(double lambda1, double lambda2) {
         this.lambda1 = new DoubleHyperParameter(lambda1, HYPER_PARAMETER_LAMBDA1);
         this.lambda2 = new DoubleHyperParameter(lambda2, HYPER_PARAMETER_LAMBDA2);
+    }
+
+    public ElasticNetRegularization() {
+        this(0.0, 0.0);
     }
 
     @Override
@@ -50,5 +58,25 @@ public class ElasticNetRegularization implements Regularization {
     @Override
     public List<HyperParameter<?>> getHyperParameters() {
         return Arrays.asList(lambda1, lambda2);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_REGULARIZER);
+        lambda1.save(out);
+        lambda2.save(out);
+        out.writeInt(MLFlag.END_REGULARIZER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        var flag = in.readInt();
+        MLFlag.ensureStartRegularization(flag);
+
+        lambda1.load(in);
+        lambda2.load(in);
+
+        var end = in.readInt();
+        MLFlag.ensureEndRegularization(end);
     }
 }

@@ -6,7 +6,11 @@ import org.owasp.netryx.mlcore.params.DoubleHyperParameter;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
 import org.owasp.netryx.mlcore.regularization.Regularization;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,5 +66,31 @@ public class AdamOptimizer implements Optimizer {
     @Override
     public List<HyperParameter<?>> getHyperParameters() {
         return Arrays.asList(learningRate, iterations, beta1, beta2, epsilon);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_OPTIMIZER);
+
+        learningRate.save(out);
+        iterations.save(out);
+        beta1.save(out);
+        beta2.save(out);
+        epsilon.save(out);
+
+        out.writeInt(MLFlag.END_REGULARIZER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartOptimizer(in.readInt());
+
+        learningRate.load(in);
+        iterations.load(in);
+        beta1.load(in);
+        beta2.load(in);
+        epsilon.load(in);
+
+        MLFlag.ensureEndOptimizer(in.readInt());
     }
 }

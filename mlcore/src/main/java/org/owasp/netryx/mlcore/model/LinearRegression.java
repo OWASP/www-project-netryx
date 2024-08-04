@@ -7,8 +7,13 @@ import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.prediction.LabelPrediction;
 import org.owasp.netryx.mlcore.regularization.Regularization;
+import org.owasp.netryx.mlcore.serialize.component.MatrixComponent;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 import org.owasp.netryx.mlcore.util.DataUtil;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,5 +78,27 @@ public class LinearRegression implements Regressor {
 
     public static LinearRegression create() {
         return create(null);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+
+        new MatrixComponent(coefficients).save(out);
+        regularizer.save(out);
+
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
+
+        var matrix = new MatrixComponent();
+        matrix.load(in);
+        this.coefficients = matrix.getMatrix();
+
+        regularizer.load(in);
+        MLFlag.ensureEndModel(in.readInt());
     }
 }

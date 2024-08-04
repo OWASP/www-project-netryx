@@ -3,7 +3,11 @@ package org.owasp.netryx.mlcore.encoder;
 import org.owasp.netryx.mlcore.frame.series.AbstractSeries;
 import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.frame.series.Series;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,5 +52,34 @@ public class OneHotEncoder implements Encoder {
 
     public Set<String> getUniqueValues() {
         return uniqueValues;
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_ENCODER);
+        out.writeUTF(columnName);
+
+        var size = uniqueValues.size();
+
+        out.writeInt(size);
+        for (var value : uniqueValues)
+            out.writeUTF(value);
+
+        out.writeInt(MLFlag.END_ENCODER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartEncoder(in.readInt());
+
+        columnName = in.readUTF();
+
+        var size = in.readInt();
+        this.uniqueValues = new HashSet<>(size);
+
+        for (var i = 0; i < size; i++)
+            uniqueValues.add(in.readUTF());
+
+        MLFlag.ensureEndEncoder(in.readInt());
     }
 }

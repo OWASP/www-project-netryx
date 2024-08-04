@@ -6,9 +6,12 @@ import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.model.tree.node.TreeNode;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
-import org.owasp.netryx.mlcore.prediction.ClassificationPrediction;
 import org.owasp.netryx.mlcore.prediction.LabelPrediction;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,7 +22,7 @@ public class DecisionTree implements Regressor {
     private final IntegerHyperParameter maxDepth;
     private final IntegerHyperParameter minSamplesSplit;
 
-    private TreeNode root;
+    private TreeNode root = new TreeNode();
 
     public DecisionTree(int maxDepth, int minSamplesSplit) {
         this.maxDepth = new IntegerHyperParameter(maxDepth, HYPER_PARAM_MAX_DEPTH);
@@ -178,5 +181,27 @@ public class DecisionTree implements Regressor {
             }
         }
         return new LabelPrediction(node.getPrediction());
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+
+        maxDepth.save(out);
+        minSamplesSplit.save(out);
+        root.save(out);
+
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
+
+        maxDepth.load(in);
+        minSamplesSplit.load(in);
+        root.load(in);
+
+        MLFlag.ensureEndModel(in.readInt());
     }
 }

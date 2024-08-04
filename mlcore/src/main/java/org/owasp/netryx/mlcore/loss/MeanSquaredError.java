@@ -2,6 +2,10 @@ package org.owasp.netryx.mlcore.loss;
 
 import org.ejml.simple.SimpleMatrix;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class MeanSquaredError implements LossFunction {
     @Override
     public SimpleMatrix predict(SimpleMatrix X, SimpleMatrix coefficients) {
@@ -18,5 +22,15 @@ public class MeanSquaredError implements LossFunction {
     public double loss(SimpleMatrix y, SimpleMatrix predictions) {
         var diff = y.minus(predictions);
         return diff.elementMult(diff).elementSum() / y.getNumRows();
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        // nothing to store
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        // nothing to store
     }
 }

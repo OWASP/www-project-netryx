@@ -6,7 +6,11 @@ import org.owasp.netryx.mlcore.params.DoubleHyperParameter;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
 import org.owasp.netryx.mlcore.regularization.Regularization;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +24,10 @@ public class GradientDescent implements Optimizer {
     public GradientDescent(double learningRate, int iterations) {
         this.learningRate = new DoubleHyperParameter(learningRate, HYPER_PARAMETER_LEARNING_RATE);
         this.iterations = new IntegerHyperParameter(iterations, HYPER_PARAMETER_ITERATIONS);
+    }
+
+    public GradientDescent() {
+        this(0.1, 1000);
     }
 
     @Override
@@ -41,5 +49,25 @@ public class GradientDescent implements Optimizer {
     @Override
     public List<HyperParameter<?>> getHyperParameters() {
         return Arrays.asList(learningRate, iterations);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_OPTIMIZER);
+
+        learningRate.save(out);
+        iterations.save(out);
+
+        out.writeInt(MLFlag.END_OPTIMIZER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartOptimizer(in.readInt());
+
+        learningRate.load(in);
+        iterations.load(in);
+
+        MLFlag.ensureEndOptimizer(in.readInt());
     }
 }

@@ -3,7 +3,12 @@ package org.owasp.netryx.mlcore.encoder;
 import org.owasp.netryx.mlcore.frame.series.AbstractSeries;
 import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.frame.series.DoubleSeries;
+import org.owasp.netryx.mlcore.serialize.component.StringDoubleMapComponent;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class LabelEncoder implements Encoder {
@@ -47,5 +52,29 @@ public class LabelEncoder implements Encoder {
 
     public String getColumnName() {
         return columnName;
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_ENCODER);
+
+        out.writeUTF(columnName);
+        new StringDoubleMapComponent(labelMapping).save(out);
+
+        out.writeInt(MLFlag.END_ENCODER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartEncoder(in.readInt());
+
+        this.columnName = in.readUTF();
+
+        var component = new StringDoubleMapComponent();
+        component.load(in);
+
+        this.labelMapping = component.getMap();
+
+        MLFlag.ensureEndEncoder(in.readInt());
     }
 }

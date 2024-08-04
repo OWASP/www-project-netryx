@@ -10,8 +10,12 @@ import org.owasp.netryx.mlcore.optimizer.Optimizer;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.prediction.ClassificationPrediction;
 import org.owasp.netryx.mlcore.regularization.Regularization;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 import org.owasp.netryx.mlcore.util.DataUtil;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +98,28 @@ public class LogisticRegression implements Classifier {
 
     public static LogisticRegression create() {
         return newBuilder().build();
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+
+        optimizer.save(out);
+        regularizer.save(out);
+        lossFunction.save(out);
+
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
+
+        optimizer.load(in);
+        regularizer.load(in);
+        lossFunction.load(in);
+
+        MLFlag.ensureEndModel(in.readInt());
     }
 
     public static class LogisticRegressionBuilder {

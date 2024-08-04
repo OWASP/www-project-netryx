@@ -6,8 +6,14 @@ import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.frame.DataFrame;
 import org.owasp.netryx.mlcore.frame.series.DoubleSeries;
 import org.owasp.netryx.mlcore.prediction.ClassificationPrediction;
+import org.owasp.netryx.mlcore.serialize.component.DoubleMapComponent;
+import org.owasp.netryx.mlcore.serialize.component.LogFeatureProbabilityComponent;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 import org.owasp.netryx.mlcore.util.DataUtil;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -151,6 +157,33 @@ public class NaiveBayes implements Classifier {
     public static NaiveBayes create() {
         return newBuilder()
                 .build();
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+        new DoubleMapComponent(classProbabilities).save(out);
+        new LogFeatureProbabilityComponent(logFeatureProbabilities).save(out);
+
+        alpha.save(out);
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
+        var classProbability = new DoubleMapComponent();
+        classProbability.load(in);
+
+        var logFeatures = new LogFeatureProbabilityComponent();
+        logFeatures.load(in);
+
+        alpha.load(in);
+
+        MLFlag.ensureEndModel(in.readInt());
+
+        this.classProbabilities = classProbability.getMap();
+        this.logFeatureProbabilities = logFeatures.getMap();
     }
 
     public static class NaiveBayesBuilder {

@@ -6,7 +6,11 @@ import org.owasp.netryx.mlcore.params.DoubleHyperParameter;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
 import org.owasp.netryx.mlcore.prediction.LabelPrediction;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,12 +21,16 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class GradientBoosting implements Regressor {
+    private final Object lock = new Object();
+
     private final IntegerHyperParameter numTrees;
     private final IntegerHyperParameter maxDepth;
     private final IntegerHyperParameter minSamplesSplit;
     private final DoubleHyperParameter learningRate;
-    private final List<DecisionTree> trees;
+
+    private List<DecisionTree> trees;
     private final ExecutorService executor;
+
     private double initialPrediction;
 
     private GradientBoosting(int numTrees, int maxDepth, int minSamplesSplit, double learningRate, int parallelism) {
@@ -47,7 +55,7 @@ public class GradientBoosting implements Regressor {
             futures.add(CompletableFuture.runAsync(() -> {
                 var tree = new DecisionTree(maxDepth.getValue(), minSamplesSplit.getValue());
                 tree.fit(X, new DataFrame(Map.of("residuals", residuals)));
-                synchronized (trees) {
+                synchronized (lock) {
                     trees.add(tree);
                 }
 
@@ -106,6 +114,48 @@ public class GradientBoosting implements Regressor {
 
     public static GradientBoosting create() {
         return newBuilder().build();
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_MODEL);
+
+        numTrees.save(out);
+        maxDepth.save(out);
+        minSamplesSplit.save(out);
+        learningRate.save(out);
+
+        out.writeDouble(initialPrediction);
+
+        out.writeInt(trees.size());
+        for (var tree : trees)
+            tree.save(out);
+
+        out.writeInt(MLFlag.END_MODEL);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
+
+        numTrees.load(in);
+        maxDepth.load(in);
+        minSamplesSplit.load(in);
+        learningRate.load(in);
+
+        this.initialPrediction = in.readDouble();
+
+        var treeCount = in.readInt();
+        this.trees = new ArrayList<>(treeCount);
+
+        for (var i = 0; i < treeCount; i++) {
+            var tree = new DecisionTree(0, 0);
+            tree.load(in);
+
+            trees.add(tree);
+        }
+
+        MLFlag.ensureEndModel(in.readInt());
     }
 
     public static class GradientBoostingBuilder {

@@ -3,7 +3,11 @@ package org.owasp.netryx.mlcore.regularization;
 import org.ejml.simple.SimpleMatrix;
 import org.owasp.netryx.mlcore.params.DoubleHyperParameter;
 import org.owasp.netryx.mlcore.params.HyperParameter;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +18,10 @@ public class L1Regularization implements Regularization {
 
     public L1Regularization(double lambda) {
         this.lambda = new DoubleHyperParameter(lambda, HYPER_PARAMETER_LAMBDA);
+    }
+
+    public L1Regularization() {
+        this.lambda = new DoubleHyperParameter(0.0, HYPER_PARAMETER_LAMBDA);
     }
 
     @Override
@@ -42,5 +50,23 @@ public class L1Regularization implements Regularization {
     @Override
     public List<HyperParameter<?>> getHyperParameters() {
         return Collections.singletonList(lambda);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_REGULARIZER);
+        lambda.save(out);
+        out.writeInt(MLFlag.END_REGULARIZER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        var flag = in.readInt();
+        MLFlag.ensureStartRegularization(flag);
+
+        lambda.load(in);
+
+        var endFlag = in.readInt();
+        MLFlag.ensureEndRegularization(endFlag);
     }
 }

@@ -1,10 +1,15 @@
 package org.owasp.netryx.mlcore.model.knn;
 
+import org.owasp.netryx.mlcore.serialize.MLComponent;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
-public class KDTree {
+public class KDTree implements MLComponent {
     private KDNode root;
-    private final int k;
+    private int k;
 
     public KDTree(int k) {
         this.k = k;
@@ -73,6 +78,20 @@ public class KDTree {
         }
 
         return Math.sqrt(dist);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(k);
+        root.save(out);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        k = in.readInt();
+
+        root = new KDNode();
+        root.load(in);
     }
 
     public static class KDNodeDist {

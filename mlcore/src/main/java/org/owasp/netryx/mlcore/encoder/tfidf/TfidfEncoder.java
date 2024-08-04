@@ -1,10 +1,15 @@
 package org.owasp.netryx.mlcore.encoder.tfidf;
 
 import org.owasp.netryx.mlcore.encoder.Encoder;
-import org.owasp.netryx.mlcore.frame.series.AbstractSeries;
 import org.owasp.netryx.mlcore.frame.DataFrame;
+import org.owasp.netryx.mlcore.frame.series.AbstractSeries;
 import org.owasp.netryx.mlcore.frame.series.DoubleSeries;
+import org.owasp.netryx.mlcore.serialize.component.StringDoubleMapComponent;
+import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +20,8 @@ import java.util.stream.Collectors;
 public class TfidfEncoder implements Encoder {
     private String columnName;
     private Map<String, Double> idfValues;
-    private final NGram nGram;
+    private NGram nGram;
+
     private final Executor executor;
 
     public TfidfEncoder(NGram nGram, int parallelism) {
@@ -65,7 +71,6 @@ public class TfidfEncoder implements Encoder {
         documentFrequencies.forEach((term, docFrequency) -> {
             var idf = Math.log((double) (numDocuments + 1) / (1 + docFrequency));
             idfValues.put(term, idf);
-            System.out.println("Term: " + term + ", Doc Frequency: " + docFrequency + ", IDF: " + idf);
         });
     }
 
@@ -109,9 +114,38 @@ public class TfidfEncoder implements Encoder {
             var termTfidfValues = tfidfVectors.stream()
                     .map(vector -> vector.getOrDefault(term, 0.0))
                     .collect(Collectors.toList());
+
             newData.put(term, new DoubleSeries(termTfidfValues));
         });
 
         return new DataFrame(newData);
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        out.writeInt(MLFlag.START_ENCODER);
+
+        out.writeUTF(columnName);
+        new StringDoubleMapComponent(idfValues).save(out);
+        nGram.save(out);
+
+        out.writeInt(MLFlag.END_ENCODER);
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartEncoder(in.readInt());
+
+        columnName = in.readUTF();
+
+        var component = new StringDoubleMapComponent();
+        component.load(in);
+
+        idfValues = component.getMap();
+
+        this.nGram = new NGram();
+        nGram.load(in);
+
+        MLFlag.ensureEndEncoder(in.readInt());
     }
 }

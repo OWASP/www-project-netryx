@@ -1,6 +1,8 @@
 package org.owasp.netryx.mlcore.params;
 
-public abstract class AbstractHyperParameter<T> implements HyperParameter<T> {
+import org.owasp.netryx.mlcore.serialize.MLComponent;
+
+public abstract class AbstractHyperParameter<T> implements HyperParameter<T>, MLComponent {
     private T value;
     private final String name;
 
