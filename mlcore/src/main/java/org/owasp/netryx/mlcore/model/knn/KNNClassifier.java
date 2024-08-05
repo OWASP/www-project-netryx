@@ -118,6 +118,17 @@ public class KNNClassifier implements Classifier {
 
     @Override
     public void load(DataInputStream in) throws IOException {
+        MLFlag.ensureStartModel(in.readInt());
 
+        var labels = new InstanceLabelMapComponent() {{
+            load(in);
+        }};
+
+        instanceLabelMap = labels.getMap();
+
+        kdTree = new KDTree(0);
+        kdTree.load(in);
+
+        MLFlag.ensureEndModel(in.readInt());
     }
 }

@@ -54,4 +54,8 @@ public class InstanceLabelMapComponent implements MLComponent {
 
         this.map = instanceLabelMap;
     }
+
+    public Map<double[], Double> getMap() {
+        return map;
+    }
 }
