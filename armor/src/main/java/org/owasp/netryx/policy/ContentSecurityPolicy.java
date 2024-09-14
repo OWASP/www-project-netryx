@@ -1,9 +1,6 @@
 package org.owasp.netryx.policy;
 
 
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -138,7 +135,7 @@ public class ContentSecurityPolicy implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
-        response.headers().set(HttpHeaderNames.CONTENT_SECURITY_POLICY, buildHeader());
+    public void apply(ResponseHeaders responseHeaders) {
+        responseHeaders.set("Content-Security-Policy", buildHeader());
     }
 }

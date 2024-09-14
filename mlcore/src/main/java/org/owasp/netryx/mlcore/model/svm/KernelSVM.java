@@ -10,6 +10,9 @@ import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.params.IntegerHyperParameter;
 import org.owasp.netryx.mlcore.prediction.ClassificationPrediction;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -140,25 +143,30 @@ public class KernelSVM implements Classifier {
         var newAlpha2 = alpha2 + y2 * (E1 - E2) / eta;
         newAlpha2 = Math.min(Math.max(newAlpha2, L), H);
 
-        if (Math.abs(newAlpha2 - alpha2) < tol.getValue() * (newAlpha2 + alpha2 + tol.getValue())) return false;
+        if (Math.abs(newAlpha2 - alpha2) < tol.getValue() * (newAlpha2 + alpha2 + tol.getValue()))
+            return false;
 
         var newAlpha1 = alpha1 + s * (alpha2 - newAlpha2);
+
+        double oldAlpha1 = alpha.get(i1);
+        double oldAlpha2 = alpha.get(i2);
+
         alpha.set(i1, newAlpha1);
         alpha.set(i2, newAlpha2);
 
-        updateBias(E1, E2, i1, i2, newAlpha1, newAlpha2, X, Y);
+        updateBias(E1, E2, i1, i2, newAlpha1, newAlpha2, oldAlpha1, oldAlpha2, X, Y);
 
         return true;
     }
 
-    private void updateBias(double E1, double E2, int i1, int i2, double newAlpha1, double newAlpha2, SimpleMatrix X, SimpleMatrix Y) {
+    private void updateBias(double E1, double E2, int i1, int i2, double newAlpha1, double newAlpha2, double oldAlpha1, double oldAlpha2, SimpleMatrix X, SimpleMatrix Y) {
         var b1 = b - E1
-                - Y.get(i1) * (newAlpha1 - alpha.get(i1)) * kernel.apply(X.extractVector(true, i1), X.extractVector(true, i1))
-                - Y.get(i2) * (newAlpha2 - alpha.get(i2)) * kernel.apply(X.extractVector(true, i1), X.extractVector(true, i2));
+                - Y.get(i1) * (newAlpha1 - oldAlpha1) * kernel.apply(X.extractVector(true, i1), X.extractVector(true, i1))
+                - Y.get(i2) * (newAlpha2 - oldAlpha2) * kernel.apply(X.extractVector(true, i1), X.extractVector(true, i2));
 
         var b2 = b - E2
-                - Y.get(i1) * (newAlpha1 - alpha.get(i1)) * kernel.apply(X.extractVector(true, i1), X.extractVector(true, i2))
-                - Y.get(i2) * (newAlpha2 - alpha.get(i2)) * kernel.apply(X.extractVector(true, i2), X.extractVector(true, i2));
+                - Y.get(i1) * (newAlpha1 - oldAlpha1) * kernel.apply(X.extractVector(true, i1), X.extractVector(true, i2))
+                - Y.get(i2) * (newAlpha2 - oldAlpha2) * kernel.apply(X.extractVector(true, i2), X.extractVector(true, i2));
 
         if (0 < newAlpha1 && newAlpha1 < C.getValue()) {
             b = b1;
@@ -209,6 +217,16 @@ public class KernelSVM implements Classifier {
 
     public static KernelSVMBuilder newBuilder() {
         return new KernelSVMBuilder();
+    }
+
+    @Override
+    public void save(DataOutputStream out) throws IOException {
+        throw new UnsupportedOperationException("KernelSVM is in Beta");
+    }
+
+    @Override
+    public void load(DataInputStream in) throws IOException {
+        throw new UnsupportedOperationException("KernelSVM is in Beta");
     }
 
     public static class KernelSVMBuilder {

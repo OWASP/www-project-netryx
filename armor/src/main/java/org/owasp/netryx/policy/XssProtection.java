@@ -1,7 +1,5 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.StringJoiner;
 
 /**
@@ -42,12 +40,12 @@ public class XssProtection implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         var joiner = new StringJoiner("; ");
 
         if (!enabled) {
             joiner.add("0");
-            response.headers().set(HEADER_NAME, joiner.toString().trim());
+            responseHeaders.set(HEADER_NAME, joiner.toString().trim());
 
             return;
         }
@@ -60,7 +58,7 @@ public class XssProtection implements SecurityPolicy {
         if (!report.isEmpty())
             joiner.add(report);
 
-        response.headers().set(HEADER_NAME, joiner.toString().trim());
+        responseHeaders.set(HEADER_NAME, joiner.toString().trim());
     }
 
     private static final String HEADER_NAME = "X-XSS-Protection";

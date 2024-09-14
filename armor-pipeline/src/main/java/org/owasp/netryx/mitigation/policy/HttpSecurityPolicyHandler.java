@@ -51,7 +51,7 @@ public class HttpSecurityPolicyHandler extends OutboundMitigationHandler {
         LOGGER.debug("Applying {} security policies to HTTP response", policies.size());
 
         for (var policy : policies)
-            policy.apply(response);
+            policy.apply((name, value) -> response.headers().set(name, value));
 
         super.write(ctx, response, promise);
     }

@@ -1,28 +1,32 @@
 plugins {
     id 'java'
+    id 'java-library'
     id 'maven-publish'
     id 'signing'
 }
 
 group = 'org.owasp.netryx'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
-    compileOnly 'io.projectreactor.netty:reactor-netty-http:1.1.14'
-    compileOnly project(":armor-pipeline")
-    compileOnly(project(":armor"))
+    api 'io.netty:netty-codec-http2:4.1.111.Final'
+    api 'io.netty:netty-common:4.1.101.Final'
+
+    api 'io.projectreactor:reactor-core:3.6.0'
+
+    compileOnly project(":armor")
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 def isReleaseVersion = !version.endsWith("SNAPSHOT")
@@ -44,10 +48,10 @@ publishing {
 
             pom {
                 groupId = 'org.owasp.netryx'
-                artifactId = 'reactor-netty-provider'
-                version = '1.0.0'
-                name = 'OWASP Netryx Rector Netty Provider'
-                description = 'Reactor Netty provider for Netryx Armor Pipeline'
+                artifactId = 'pipeline'
+                version = '1.0.1'
+                name = 'OWASP Netryx Pipeline'
+                description = 'Security Pipeline for Netty based servers'
                 url = 'https://github.com/OWASP/www-project-netryx'
 
                 licenses {

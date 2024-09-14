@@ -8,7 +8,7 @@ public class Series<T> extends AbstractSeries<T> {
     }
 
     @Override
-    protected <R> AbstractSeries<R> createSeries(List<R> data) {
+    public <R> AbstractSeries<R> createSeries(List<R> data) {
         return new Series<>(data);
     }
 }

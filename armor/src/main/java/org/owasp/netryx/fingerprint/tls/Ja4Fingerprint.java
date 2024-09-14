@@ -1,6 +1,5 @@
 package org.owasp.netryx.fingerprint.tls;
 
-import org.apache.hc.client5.http.utils.Hex;
 import org.owasp.netryx.constant.TransportProtocol;
 import org.owasp.netryx.fingerprint.tls.packet.client.ClientHello;
 import org.owasp.netryx.fingerprint.tls.packet.constant.*;
@@ -10,6 +9,7 @@ import org.owasp.netryx.fingerprint.tls.packet.model.ECPointFormat;
 import org.owasp.netryx.fingerprint.tls.packet.model.EllipticCurve;
 import org.owasp.netryx.fingerprint.tls.packet.model.SignatureAlgorithm;
 import org.owasp.netryx.util.Hash;
+import org.owasp.netryx.util.Hex;
 
 import java.util.Comparator;
 import java.util.List;
@@ -157,7 +157,7 @@ public class Ja4Fingerprint implements TlsFingerprint {
     }
 
     private static String hashFirst12Characters(String input) {
-        return Hex.encodeHexString(Hash.sha256(input.getBytes())).substring(0, 12);
+        return Hex.toHexString(Hash.sha256(input.getBytes())).substring(0, 12);
     }
 
     private static ProtocolVersion findMaxNonGreaseVersion(List<ProtocolVersion> versions) {

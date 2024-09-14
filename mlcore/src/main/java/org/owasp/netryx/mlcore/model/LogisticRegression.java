@@ -10,6 +10,7 @@ import org.owasp.netryx.mlcore.optimizer.Optimizer;
 import org.owasp.netryx.mlcore.params.HyperParameter;
 import org.owasp.netryx.mlcore.prediction.ClassificationPrediction;
 import org.owasp.netryx.mlcore.regularization.Regularization;
+import org.owasp.netryx.mlcore.serialize.component.MatrixComponent;
 import org.owasp.netryx.mlcore.serialize.flag.MLFlag;
 import org.owasp.netryx.mlcore.util.DataUtil;
 
@@ -103,6 +104,7 @@ public class LogisticRegression implements Classifier {
     @Override
     public void save(DataOutputStream out) throws IOException {
         out.writeInt(MLFlag.START_MODEL);
+        new MatrixComponent(coefficients).save(out);
 
         optimizer.save(out);
         regularizer.save(out);
@@ -115,6 +117,10 @@ public class LogisticRegression implements Classifier {
     public void load(DataInputStream in) throws IOException {
         MLFlag.ensureStartModel(in.readInt());
 
+        var coefficients = new MatrixComponent();
+        coefficients.load(in);
+
+        this.coefficients = coefficients.getMatrix();
         optimizer.load(in);
         regularizer.load(in);
         lossFunction.load(in);

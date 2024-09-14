@@ -1,7 +1,5 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpResponse;
-
 /**
  * ContentTypeOptions
  * Security policy that sets the X-Content-Type-Options header
@@ -19,9 +17,9 @@ public class ContentTypeOptions implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         if (noSniff)
-            response.headers().set(HEADER_NAME, "nosniff");
+            responseHeaders.set(HEADER_NAME, "nosniff");
     }
 
     private static final String HEADER_NAME = "X-Content-Type-Options";

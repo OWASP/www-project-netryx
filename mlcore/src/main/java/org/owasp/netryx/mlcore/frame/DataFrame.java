@@ -151,10 +151,14 @@ public class DataFrame {
 
     public DataFrame slice(int start, int end) {
         Map<String, AbstractSeries<?>> newData = new LinkedHashMap<>();
+
         for (var col : columns) {
-            var slicedData = data.get(col).getData().subList(start, end);
-            newData.put(col, new Series<>(slicedData));
+            var series = data.get(col);
+            var slicedData = series.getData().subList(start, end);
+
+            newData.put(col, series.createSeries(slicedData));
         }
+
         return new DataFrame(newData);
     }
 

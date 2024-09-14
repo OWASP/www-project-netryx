@@ -2,6 +2,8 @@ package org.owasp.netryx.mlcore.util;
 
 import org.ejml.simple.SimpleMatrix;
 import org.owasp.netryx.mlcore.frame.DataFrame;
+import org.owasp.netryx.mlcore.frame.series.DoubleSeries;
+import org.owasp.netryx.mlcore.frame.series.IntSeries;
 import org.owasp.netryx.mlcore.prediction.Prediction;
 
 import java.util.List;
@@ -20,8 +22,17 @@ public class DataUtil {
 
         for (var i = 0; i < n; i++) {
             interceptX[i][0] = 1.0;
+
             for (var j = 0; j < m; j++) {
-                interceptX[i][j + 1] = X.getColumn(j).castAsDouble().getDouble(i);
+                var column = X.getColumn(j);
+
+                if (column instanceof DoubleSeries) {
+                    interceptX[i][j + 1] = ((DoubleSeries) column).getDouble(i);
+                } else if (column instanceof IntSeries) {
+                    interceptX[i][j + 1] = ((IntSeries) column).getInt(i);
+                } else {
+                    throw new IllegalArgumentException("Unsupported column type: " + column.getClass());
+                }
             }
         }
 

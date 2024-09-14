@@ -1,4 +1,4 @@
-package org.owasp.netryx.fingerprint.tls;
+package org.owasp.netryx.mitigation.fingerprint;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.owasp.netryx.fingerprint.constant.ResultCode;

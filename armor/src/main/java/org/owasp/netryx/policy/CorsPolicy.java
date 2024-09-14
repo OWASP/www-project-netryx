@@ -1,14 +1,7 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.HashSet;
 import java.util.Set;
-
-import static io.netty.handler.codec.http.HttpHeaderNames.*;
-import static io.netty.handler.codec.http.HttpMethod.*;
-import static org.apache.hc.core5.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 
 /**
  * CorsPolicy
@@ -22,12 +15,12 @@ public class CorsPolicy implements SecurityPolicy {
     private Set<String> allowedOrigins = new HashSet<>(Set.of("*"));
     // defines valid methods
     private Set<String> allowedMethods = new HashSet<>(
-            Set.of(GET.name(), POST.name(), PUT.name(), DELETE.name(), OPTIONS.name())
+            Set.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
     );
 
     // defines valid headers
     private Set<String> allowedHeaders = new HashSet<>(
-            Set.of(HttpHeaderNames.CONTENT_TYPE.toString(), HttpHeaderNames.AUTHORIZATION.toString())
+            Set.of("Content-Type", "Authorization")
     );
 
     // indicates whether the response to the request can be exposed
@@ -83,8 +76,9 @@ public class CorsPolicy implements SecurityPolicy {
         this.enabled = enabled;
     }
 
+    // replace constants with actual names
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         if (!enabled)
             return;
 
@@ -92,11 +86,10 @@ public class CorsPolicy implements SecurityPolicy {
         var methods = String.join(", ", allowedMethods);
         var headers = String.join(", ", allowedHeaders);
 
-        var responseHeaders = response.headers();
-        responseHeaders.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, origins);
-        responseHeaders.set(ACCESS_CONTROL_ALLOW_METHODS, methods);
-        responseHeaders.set(ACCESS_CONTROL_ALLOW_HEADERS, headers);
-        responseHeaders.set(ACCESS_CONTROL_ALLOW_CREDENTIALS, String.valueOf(allowCredentials));
-        responseHeaders.set(ACCESS_CONTROL_MAX_AGE, String.valueOf(maxAge));
+        responseHeaders.set("Access-Control-Allow-Origin", origins);
+        responseHeaders.set("Access-Control-Allow-Methods", methods);
+        responseHeaders.set("Access-Control-Allow-Headers", headers);
+        responseHeaders.set("Access-Control-Allow-Credentials", String.valueOf(allowCredentials));
+        responseHeaders.set("Access-Control-Max-Age", String.valueOf(maxAge));
     }
 }

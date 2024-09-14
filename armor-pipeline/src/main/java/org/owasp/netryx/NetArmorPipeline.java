@@ -1,8 +1,8 @@
-package org.owasp.netryx.pipeline;
+package org.owasp.netryx;
 
 import org.owasp.netryx.config.CommonSecurityConfig;
 import org.owasp.netryx.config.SecurityConfig;
-import org.owasp.netryx.fingerprint.tls.TlsFingerprintPacketHandler;
+import org.owasp.netryx.mitigation.fingerprint.TlsFingerprintPacketHandler;
 import org.owasp.netryx.intrusion.IntrusionDetector;
 import org.owasp.netryx.limiter.BlacklistLimiter;
 import org.owasp.netryx.limiter.WhitelistLimiter;

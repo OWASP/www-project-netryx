@@ -1,7 +1,5 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -33,11 +31,11 @@ public class FeaturePolicy implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         if (directives.isEmpty())
             return;
 
-        response.headers().set(HEADER_NAME, buildHeader());
+        responseHeaders.set(HEADER_NAME, buildHeader());
     }
 
     private static final String HEADER_NAME = "Feature-Policy";

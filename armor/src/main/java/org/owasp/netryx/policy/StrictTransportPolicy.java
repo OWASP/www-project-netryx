@@ -1,7 +1,5 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpResponse;
-
 import java.util.StringJoiner;
 
 /**
@@ -38,7 +36,7 @@ public class StrictTransportPolicy implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         if (maxAge == 0L)
             return;
 
@@ -46,7 +44,7 @@ public class StrictTransportPolicy implements SecurityPolicy {
         joiner.add(String.format("max-age=%s", maxAge));
 
         if (!includeSubDomains) {
-            response.headers().set(HEADER_NAME, joiner.toString().trim());
+            responseHeaders.set(HEADER_NAME, joiner.toString().trim());
             return;
         }
 
@@ -55,7 +53,7 @@ public class StrictTransportPolicy implements SecurityPolicy {
         if (preload)
             joiner.add("preload");
 
-        response.headers().set(HEADER_NAME, joiner.toString().trim());
+        responseHeaders.set(HEADER_NAME, joiner.toString().trim());
     }
 
     private static final String HEADER_NAME = "Strict-Transport-Security";

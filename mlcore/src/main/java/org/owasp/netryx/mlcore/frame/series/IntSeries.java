@@ -37,6 +37,12 @@ public class IntSeries extends Series<Integer> implements NumericSeries {
     }
 
     @Override
+    public <R> AbstractSeries<R> createSeries(List<R> data) {
+        return (AbstractSeries<R>) super.createSeries(data).castAsInt();
+    }
+
+
+    @Override
     public AbstractSeries<Integer> copy() {
         return new IntSeries(new ArrayList<>(data));
     }

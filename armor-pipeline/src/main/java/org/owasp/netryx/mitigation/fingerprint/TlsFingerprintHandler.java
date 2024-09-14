@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import org.owasp.netryx.constant.ChannelScope;
 import org.owasp.netryx.fingerprint.constant.ResultCode;
-import org.owasp.netryx.fingerprint.tls.TlsFingerprintPacketHandler;
 import org.owasp.netryx.fingerprint.tls.packet.client.ClientHello;
 import org.owasp.netryx.mitigation.InboundMitigationHandler;
 import org.owasp.netryx.provider.NettyServerProvider;

@@ -23,6 +23,11 @@ public class DoubleSeries extends Series<Double> implements NumericSeries {
     }
 
     @Override
+    public <R> AbstractSeries<R> createSeries(List<R> data) {
+        return (AbstractSeries<R>) super.createSeries(data).castAsDouble();
+    }
+
+    @Override
     public double mean() {
         if (data.isEmpty()) return 0;
 

@@ -46,5 +46,7 @@ Please note, that the list of realized functionality is subject to change.
 ___
 ## Road Map
 - **August 2024**:\
-Model saving and loading.\
+Model saving and loading.
+
+- **September 2024**:\
 First stable release.

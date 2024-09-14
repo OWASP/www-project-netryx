@@ -1,8 +1,5 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponse;
-
 /**
  * FrameOptions
  * Security policy that sets the X-Frame-Options header
@@ -20,11 +17,11 @@ public class FrameOptions implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         if (directive == Directive.NONE)
             return;
 
-        response.headers().set(HttpHeaderNames.X_FRAME_OPTIONS, directive.name());
+        responseHeaders.set("X-Frame-Options", directive.name());
     }
 
     public enum Directive {

@@ -1,2 +1,5 @@
 # Reporting Issues
-Contact the project leaders listed on the project webpage to report security issues
+In case of security issues, please report them to us at following email addresses:
+
+- r.aliyev@owasp.org
+- security@exploit.org

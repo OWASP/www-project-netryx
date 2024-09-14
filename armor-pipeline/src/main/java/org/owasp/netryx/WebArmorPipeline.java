@@ -1,4 +1,4 @@
-package org.owasp.netryx.pipeline;
+package org.owasp.netryx;
 
 import org.owasp.netryx.provider.NettyServerPipeline;
 

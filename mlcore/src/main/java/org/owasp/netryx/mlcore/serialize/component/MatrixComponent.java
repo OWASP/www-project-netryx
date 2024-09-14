@@ -22,7 +22,7 @@ public class MatrixComponent implements MLComponent {
         out.writeInt(matrix.getNumCols());
 
         for (int i = 0; i < matrix.getNumRows(); i++) {
-            for (int j = 0; j < matrix.getNumRows(); j++) {
+            for (int j = 0; j < matrix.getNumCols(); j++) {
                 out.writeDouble(matrix.get(i, j));
             }
         }

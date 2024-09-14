@@ -17,6 +17,7 @@ dependencies {
     implementation 'party.iroiro.luajava:luajit:4.0.1'
 
     compileOnly(project(":armor"))
+    compileOnly(project(":armor-pipeline"))
     api(project(":events"))
     api(project(":mlcore"))
 

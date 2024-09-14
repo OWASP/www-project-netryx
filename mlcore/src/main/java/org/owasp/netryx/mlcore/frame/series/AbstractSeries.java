@@ -65,6 +65,10 @@ public abstract class AbstractSeries<T> {
         return new DoubleSeries((List<Double>) data);
     }
 
+    public IntSeries castAsInt() {
+        return new IntSeries((List<Integer>) data);
+    }
+
     public T mode() {
         if (data.isEmpty()) return null;
         Map<T, Integer> frequencyMap = new HashMap<>();
@@ -86,7 +90,7 @@ public abstract class AbstractSeries<T> {
         data.set(index, value);
     }
 
-    protected abstract <R> AbstractSeries<R> createSeries(List<R> data);
+    public abstract <R> AbstractSeries<R> createSeries(List<R> data);
 
     @SafeVarargs
     public static <T> Series<T> of(T... data) {

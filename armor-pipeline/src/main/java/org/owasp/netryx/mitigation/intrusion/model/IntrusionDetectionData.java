@@ -8,6 +8,9 @@ import org.owasp.netryx.fingerprint.tls.Ja3Fingerprint;
 import org.owasp.netryx.fingerprint.tls.Ja4Fingerprint;
 import org.owasp.netryx.fingerprint.tls.packet.client.ClientHello;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Represents the data of an intrusion detection.
  */
@@ -53,7 +56,25 @@ public class IntrusionDetectionData {
     }
 
     public Ja4hFingerprint getJa4HttpFingerprint() {
-        return request == null ? null : new Ja4hFingerprint(httpProtocol, request);
+        if (request == null)
+            return null;
+
+        var headers = request.headers().entries().stream()
+                .collect(
+                    Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue
+                    )
+                );
+
+        var builder = Ja4hFingerprint.newBuilder()
+                .httpMethod(request.method().name())
+                .httpVersion(httpProtocol.getNumber());
+
+        for (var header : request.headers())
+            builder.addHeader(header.getKey(), header.getValue());
+
+        return builder.build();
     }
 
     public AkamaiHttp2Fingerprint getHttp2Fingerprint() {

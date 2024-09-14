@@ -1,7 +1,5 @@
 package org.owasp.netryx.policy;
 
-import io.netty.handler.codec.http.HttpResponse;
-
 /**
  * ReferrerPolicy
  * Security policy that sets the Referrer-Policy header
@@ -19,13 +17,13 @@ public class ReferrerPolicy implements SecurityPolicy {
     }
 
     @Override
-    public void apply(HttpResponse response) {
+    public void apply(ResponseHeaders responseHeaders) {
         var headerValue = directive.name;
 
         if (headerValue == null)
             return;
 
-        response.headers().set(HEADER_NAME, headerValue);
+        responseHeaders.set(HEADER_NAME, headerValue);
     }
 
     public enum Directive {
