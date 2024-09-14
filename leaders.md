@@ -1,2 +1,2 @@
 ### Leaders
-* [Satira](mailto:satira@exploit.org)
+* [Satira](mailto:r.aliyev@owasp.org)
