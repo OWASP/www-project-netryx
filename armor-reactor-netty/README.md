@@ -5,14 +5,14 @@ This provider is used to integrate NetArmor Enhanced security features to Reacto
 ## Dependency
 ### Gradle
 ```groovy
-implementation "org.owasp.netryx:reactor-netty-provider:1.0.0"
+implementation "org.owasp.netryx:reactor-netty-provider:1.0.1"
 ```
 ### Maven
 ```xml
 <dependency>
     <groupId>org.owasp.netryx</groupId>
     <artifactId>reactor-netty-provider</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'org.owasp.netryx'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
@@ -42,7 +42,7 @@ publishing {
             pom {
                 groupId = 'org.owasp.netryx'
                 artifactId = 'memory'
-                version = '1.0.0'
+                version = '1.0.1'
                 name = 'memory'
                 description = 'Secure memory regions for Java applications'
                 url = 'https://github.com/OWASP/www-project-netryx'

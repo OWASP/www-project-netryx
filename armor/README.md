@@ -6,14 +6,14 @@ It is backbone of Netryx eco-system, designed to provide core functionality for 
 ## Get started
 ### Gradle
 ```groovy
-implementation "org.owasp.netryx:armor:1.0.0"
+implementation "org.owasp.netryx:armor:1.0.1"
 ```
 ### Maven
 ```xml
 <dependency>
     <groupId>org.owasp.netryx</groupId>
     <artifactId>armor</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 

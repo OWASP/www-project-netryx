@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'org.owasp.netryx'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
@@ -45,7 +45,7 @@ publishing {
             pom {
                 groupId = 'org.owasp.netryx'
                 artifactId = 'reactor-netty-provider'
-                version = '1.0.0'
+                version = '1.0.1'
                 name = 'OWASP Netryx Rector Netty Provider'
                 description = 'Reactor Netty provider for Netryx Armor Pipeline'
                 url = 'https://github.com/OWASP/www-project-netryx'

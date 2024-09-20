@@ -1,4 +1,21 @@
 # Netryx Pipeline
+
+## Get started
+### Gradle
+```groovy
+implementation "org.owasp.netryx:pipeline:1.0.1"
+```
+### Maven
+```xml
+<dependency>
+    <groupId>org.owasp.netryx</groupId>
+    <artifactId>pipeline</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+
+## Usage
+
 As netty based servers may have different handlers in different order, you should first create NettyServer instance.
 
 By the current date (2024-02-19) following servers are implemented via separate dependencies:
