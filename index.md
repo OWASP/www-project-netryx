@@ -9,63 +9,83 @@ pitch: Advanced Java Security Framework
 
 ---
 
-Netryx Armor - our answer to boosting the security of web apps built in Java. 
-It’s straightforward, tackling both the user and server sides to block out cyber threats. 
-This framework is all about making your app secure, without all the hassle. Let’s get into how Netryx keeps your web applications safe:
+# Hi! 👋
+Welcome to Netryx _(pronounced 'netriks')_, advanced java security framework lead by [exploit.org](https://exploit.org) group.
+It was created to help developers make their web applications more secure and effective against various threats.
 
-Netryx splits its functionality into two parts: User-Side and Pipeline-Side, each designed to target specific security needs of your web applications.
+### Netryx Modules
+It is **modular** security framework that is designed to integrate to as many applications, as possible:
 
-User-Side Features:
+### Armor
+Armor is a backbone module of Netryx.
+#### Brief overview:
 
-1. Input Validators
-Improper input validation is the root of many security vulnerabilities, including XSS and SQL Injection. Netryx includes configurable validators to check inputs such as emails, usernames, and credit card numbers, effectively preventing common entry points for attackers.
+- ReDoS Protected Input Validators based on rules
+- Secure Memory Allocation for sensitive data storage and obfuscation
+- JS, HTML, LDAP and CMD Encoders to protect from various injection attacks
+- Centralized security event scope
 
-2. XSS Protection & HTML Sanitization
-By leveraging OWASP's AntiSamy, we provide a powerful HTML encoder that can encode user input before displaying it on a webpage, thus sanitizing HTML from XSS attacks. This robust protection ensures that malicious scripts are not executed, keeping your application safe from cross-site scripting vulnerabilities.
+#### Additional features:
+- TLS Packet Parsing Engine - Base for TLS packet inspection
+- Akamai HTTP/2, JA3, JA4, JA4H Fingerprinting Base - Fingerprint generation utilities
 
-3. Path Traversal Protection
-Path traversal is a vulnerability that allows attackers to access files outside the web root directory. Netryx's feature prevents unauthorized file access, securing your application's data from being compromised by ensuring that users can only access files within specified boundaries.
+### Pipeline
+**Secure By Default**
 
-4. Password Hashing
-A strong password hashing algorithm is crucial for protecting user passwords from brute-force attacks. Netryx offers a selection of algorithms, emphasizing the importance of using slow hashing processes to deter cracking attempts. We recommend Argon2id, the winner of the Password Hashing Competition in July 2015, along with SCrypt and BCrypt, for their proven security and effectiveness in safeguarding passwords.
+Reactive security pipeline based for Netty based servers, that uses Armor as a backbone.
 
-5. Secure Memory Allocation
-Netryx provides an advanced and secure method to handle sensitive data within your application's memory. 
-This functionality ensures that critical information, such as passwords and tokens, is stored in a cache using a way that minimizes the risk of unauthorized access or leakage.
-Memory is protected from being swapped on disk, can be obfuscated and if the size of memory is page-aligned you can manage access levels for reading, writing, and executing.
+#### Brief overview:
+- HTTP/2 0day RST Flood Protection
+- HTTP Flood Protection
+- IP Whitelisting/Blacklisting
+- Security Policy Management
+- Intrusion Detection System (IDS)
+- JA3, JA4, JA4H, HTTP/2 Fingerprinting
 
-Pipeline-Side Features:
+### WAF
+**Secure By Default**
 
-1. Reactive Protection from HTTP/2 0day RST Flood Attacks
-This feature protects your website from flooding with RESET STREAM packets that take advantage of HTTP/2 weaknesses. Cloudflare has highlighted these issues, and our tool specifically targets and blocks these types of attacks to prevent your site from going down: [https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/|https://blog.cloudflare.com/zero-day-rapid-reset-http2-record-breaking-ddos-attack/]
+Advanced Web Application Firewall for Netty based servers, that uses Armor Pipeline's backend.
 
-2. JA3 Fingerprinting
-JA3 fingerprinting identifies users based on how their devices start a secure connection. It looks at the unique "hello" messages these devices send, helping to distinguish between regular users and potential attackers by analyzing these packets.
+#### Brief overview:
+- Passive Injection protection (SQL, XSS, LDAP, CMD, etc)
+- Passive Path Traversal protection
+- Malicious client detection using JA3, JA4, JA4H, and HTTP/2 fingeprints
+- Flexible Rule Management System
 
-3. Reactive Intrusion Detection Interface
-Our intrusion detection gathers important data that includes:
-1. JA3 fingerprint, 
-2. HTTP/2 Fingerprint (according to Akamai specified format: [https://www.blackhat.com/docs/eu-17/materials/eu-17-Shuster-Passive-Fingerprinting-Of-HTTP2-Clients-wp.pdf|https://www.blackhat.com/docs/eu-17/materials/eu-17-Shuster-Passive-Fingerprinting-Of-HTTP2-Clients-wp.pdf])
-3. Related HTTP Request
-4. Related IP Address.
+### Machine Learning Core
 
-This information is used to detect and block malicious activities, acting as a comprehensive security system for your website.
+Lightweight Machine Learning library for learning and running models in an intensive environment. Utilized in Netryx WAF for mitigating threats.
 
-4. Security Policy Management
-Security Policy management refers to the implementation and enforcement of security policies like Content Security Policy (CSP), X-Frame-Options (XFO), and similar directives. These policies are crucial for defining how resources on a website can be loaded or interacted with, essentially setting the boundaries for what is considered secure behavior within a web application.
+Implements following algorithms:
+- **Linear Regression**
+- **Logistic Regression**
+- **kNN**
+- **Kernel SVM**
+- **Naive Bayes**
+- **Decision Trees**
+- **Random Forest**
+- **Gradient Boosting**
 
-5. Reactive HTTP Request Rate Limiter
-The rate limiter controls the number of requests a user can make to your site in a given timeframe, preventing overload and potential DoS attacks. This keeps your site stable and accessible by managing traffic flow effectively.
+### Memory
+Netryx Memory manages sensitive data securely in memory using Java native interface for UNIX systems.
 
-6. Reactive IP Whitelisting/Blacklisting
-This feature allows you to quickly adjust who can access your site by enabling you to add or remove IP addresses from your access list in real time. If a user is trusted, you can whitelist them for uninterrupted access. Conversely, if an IP is deemed a threat, you can blacklist it to block access immediately.
+#### Brief overview:
+- Unswappable memory allocation
+- Memory obfuscation
+- Memory regions with protection from unauthorized READ/WRITE/EXEC
 
-Thus Netryx is a powerful security solution, that can be used to protect your application from various attacks,
-but although it can be used as a complete security solution, it is recommended to use it as a part of your security solution.
-Remember, there is no 100% security. Security is a continuous process, that requires a lot of effort and our goal is to help you with it.
+### Events
+Zero dependency event manager designed for building even-based applications. Used by Netryx WAF for Security Events management.
 
+### Education materials
+Find articles here: [OWASP Path To Secure Software series](https://dev.to/owasp/intro-to-application-security-3cj3)
+
+### Contact
+For security concerns or to discuss potential features that you'd prefer not to disclose publicly, please reach out to us at: `security@exploit.org`.
+
+For general inquiries or to engage in discussions on various topics, join our Telegram channel and chat at: [@exploitorg](https://t.me/exploitorg).
 ### Road Map
-Netryx Approximate Roadmap
 
 Now - End of Year 1
 Q1: Improve documentation and create training materials for developers on the main features of Netryx.
@@ -73,9 +93,9 @@ Q2: Adaptation of User-Side and Pipeline-Side functionality to meet user require
 Q3-Q4: Extending Netryx support for additional Java frameworks, collecting feedback for further improvements.
 
 Year 2
-Q1: Designing AI driven IDS system following privacy and security requirements of processed data. Define possibilities of turning it into decentralized (p2p) view.
-Q2-Q3: Development and testing of IDS system, collecting feedback from relevant stakeholders
-Q4: First autonomous IDS system release
+Q1: Designing AI driven WAF system following privacy and security requirements of processed data. Define possibilities of turning it into decentralized (p2p) view.
+Q2-Q3: Development and testing of WAF system, collecting feedback from relevant stakeholders
+Q4: First autonomous WAF system release
 
 Year 3
 Q1-Q2: Exploration of how Netryx can be adapted for other programming languages, such as Python, C#, JavaScript and Rust.

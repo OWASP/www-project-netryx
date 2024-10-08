@@ -19,4 +19,13 @@ public final class Access {
     public static final int READ = 1;
     public static final int WRITE = 2;
     public static final int EXEC = 4;
+
+    public static class Win {
+        public static final int PAGE_NOACCESS = 0x01;
+        public static final int PAGE_READONLY = 0x02;
+        public static final int PAGE_READWRITE = 0x04;
+        public static final int PAGE_EXECUTE = 0x10;
+        public static final int PAGE_EXECUTE_READ = 0x20;
+        public static final int PAGE_EXECUTE_READWRITE = 0x40;
+    }
 }

@@ -53,9 +53,8 @@ public class LinearRegression implements Regressor {
 
         var result = new ArrayList<LabelPrediction>();
 
-        for (var i = 0; i < predictions.getNumRows(); i++) {
+        for (var i = 0; i < predictions.getNumRows(); i++)
             result.add(new LabelPrediction(predictions.get(i, 0)));
-        }
 
         return result;
     }
