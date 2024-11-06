@@ -98,11 +98,13 @@ public class Ja4Fingerprint implements TlsFingerprint {
     private String generateJa4a() {
         var tlsVersion = getTlsVersion();
         var sni = hello.getExtensions().getExtension(ExtensionType.SERVER_NAME, ServerName.class);
-        var ciphersCount = getCipherSuites().size();
-        var extensionsCount = getExtensions().size();
+        // Cap both cipher and extension count at 99 as per the specification:
+        // https://github.com/FoxIO-LLC/ja4/blob/53ad7eaf1abce2a653eebb1b4a4196f08be7f94d/technical_details/JA4.md?plain=1#L55
+        var ciphersCount = Math.min(99, getCipherSuites().size());
+        var extensionsCount = Math.min(99, getExtensions().size());
         var alpnProtocol = getFirstAlpnProtocol();
 
-        return String.format("%s%s%s%d%d%s",
+        return String.format("%s%s%s%02d%02d%s",
                 transportProtocol.name().toLowerCase().charAt(0),
                 tlsVersion,
                 (sni == null ? "i" : "d"),
