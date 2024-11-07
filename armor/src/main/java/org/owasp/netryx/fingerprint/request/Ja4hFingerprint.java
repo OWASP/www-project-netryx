@@ -40,8 +40,11 @@ public class Ja4hFingerprint {
         var methodPrefix = httpMethod.substring(0, 2).toLowerCase();
         var cookiePresence = hasCookie ? "c" : "n";
         var refererPresence = hasReferer ? "r" : "n";
+        // Adjust header count as defined in the specification, max value is always 99:
+        // https://github.com/FoxIO-LLC/ja4/blob/53ad7eaf1abce2a653eebb1b4a4196f08be7f94d/technical_details/JA4H.md?plain=1#L7
+        var adjustedHeaderCount = Math.min(99, headerCount);
 
-        return String.format("%s%s%s%s%d%s", methodPrefix, httpVersion, cookiePresence, refererPresence, headerCount, acceptLanguage);
+        return String.format("%s%s%s%s%02d%s", methodPrefix, httpVersion, cookiePresence, refererPresence, adjustedHeaderCount, acceptLanguage);
     }
 
     private String generateJa4hb() {
