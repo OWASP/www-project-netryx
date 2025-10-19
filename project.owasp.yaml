@@ -1,0 +1,27 @@
+audience:
+  - breaker
+  - builder
+community:
+  - name: project-netryx
+    platform: slack
+    url: https://owasp.slack.com/archives/C07D6R13URM
+leaders:
+  - name: Satira
+    email: r.aliyev@owasp.org
+    github: satiracode
+level: 2
+license:
+  - BSD-2-Clause
+name: OWASP Netryx
+pitch: Advanced Java Security Framework
+repositories:
+  - name: www-project-netryx
+    url: https://github.com/OWASP/www-project-netryx
+    description: Next level Java web security framework
+tags:
+  - security
+  - java
+  - netty
+  - appsec
+type: code
+website: https://owasp.org/www-project-netryx
